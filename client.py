@@ -41,11 +41,6 @@ print(b"Offset is : " + s.recv(1024))
 # send the file that was recorded to the server
 s.close()
 
-
-#host = 'ec2-100-26-31-241.compute-1.amazonaws.com' # AWS server
-
 ### terminal command (python3 <file> <student#> <AWS ip> <audioX.wav file>)
 # python3 client.py 1 100.26.31.241 audio1.wav
 
-### add files to server
-# scp file.txt remote_username@10.10.0.2:/remote/directory/newfilename.txt
