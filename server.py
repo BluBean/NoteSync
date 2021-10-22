@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-import socket, os, sys, time
-port = 60001                  # Reserve a port for your service.
+import socket, threading, os, sys, time
+
+PORT = 60001                  # Reserve a port for your service.
 s = socket.socket()             # Create a socket object
-host = socket.gethostname()
+HOST = socket.gethostname()
 
 # Get local machine name
-s.bind((host, port))
+s.bind((HOST, PORT))
 # Bind to the port
 s.listen(1)                     # Now wait for client connection.
 
@@ -36,4 +37,3 @@ while True:
     ####
 
     conn.close()
-    break
