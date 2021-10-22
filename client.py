@@ -11,7 +11,7 @@ if len(sys.argv) != 4:
     print("Syntax: python3 client.py <student number> <host> <wav file>")
     sys.exit(0)
 
-# add check to verify file exists or quit
+# add check to verify file exists or quiit
 if not os.path.exists(file):
     print(file + " does not exist. Exiting.")
     sys.exit(0)
@@ -20,11 +20,18 @@ if int(student) > 9 or int(student) < 0:
     print("Student number is invalid. Valid student numbers are 0-9.")
     sys.exit(0)
 
+
+# send the recorded file back to server
+
 with open (file,'rb') as f:
+    # Send student number, get offset
     s.connect((host, port))
+    s.send(str.encode(student))
+    print(s.recv(1024)) # getting offset value for student.
+    # record some shit
+    # save recorded shit
     print("Sending...")
     l = f.read(4096)
-    s.send(str.encode(student))
     while (l):
         print("Sending...")
         s.send(l)
@@ -32,13 +39,6 @@ with open (file,'rb') as f:
 print("Done Sending")
 s.shutdown(socket.SHUT_WR)
 print(s.recv(1024))
-print(b"Offset is : " + s.recv(1024))
-
-# recording start
-
-# recording stop
-
-# send the file that was recorded to the server
 s.close()
 
 ### terminal command (python3 <file> <student#> <AWS ip> <audioX.wav file>)
