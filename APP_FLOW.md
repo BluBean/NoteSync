@@ -14,28 +14,28 @@ Backend overview
 
 
 Server
-  Start_process()
-    1.	Main code for server
+ Start_process()
+  1.	Main code for server
 
-  Calc_offsets()
-     1.	Receive metronome/GUI data (from teacher)
-     2.	Perform backend steps 1-3
-     3.	Return offset data and student record length as dictionary
-     4.	Send to send_data()
+ Calc_offsets()
+  1.	Receive metronome/GUI data (from teacher)
+  2.	Perform backend steps 1-3
+  3.	Return offset data and student record length as dictionary
+  4.	Send to send_data()
 
-  Send_data(offsets)
-     1.	Backend steps 4 and 5
+ Send_data(offsets)
+  1.	Backend steps 4 and 5
 
-wait for student to finish recording
-     2. Steps 6-9 are done client side
+ wait for student to finish recording
+  2. Steps 6-9 are done client side
 
-     3.	Receive audio file from student
-     4.	Done receiving
-     5.	Close connection
+  3.	Receive audio file from student
+  4.	Done receiving
+  5.	Close connection
 
-  Sync_files()
-     1.	Read received audio files
-     2.	Backend steps 10-12 (maybe don’t put step 12 in this function)
+ Sync_files()
+  1.	Read received audio files
+  2.	Backend steps 10-12 (maybe don’t put step 12 in this function)
 
 Client
   1.	Enter student number (0-9)
