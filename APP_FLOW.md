@@ -18,10 +18,10 @@ Server
     1.	Main code for server
 
   Calc_offsets()
-    1.	Receive metronome/GUI data (from teacher)
-    2.	Perform backend steps 1-3
-    3.	Return offset data and student record length as dictionary
-    4.	Send to send_data()
+     1.	Receive metronome/GUI data (from teacher)
+     2.	Perform backend steps 1-3
+     3.	Return offset data and student record length as dictionary
+     4.	Send to send_data()
 
   Send_data(offsets)
     1.	Backend steps 4 and 5
