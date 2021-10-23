@@ -27,11 +27,11 @@ Server
      1.	Backend steps 4 and 5
 
 wait for student to finish recording
-  •	Steps 6-9 are done client side
+     2. Steps 6-9 are done client side
 
-     2.	Receive audio file from student
-     3.	Done receiving
-     4.	Close connection
+     3.	Receive audio file from student
+     4.	Done receiving
+     5.	Close connection
 
   Sync_files()
      1.	Read received audio files
