@@ -26,7 +26,7 @@ Server
   Send_data(offsets)
     1.	Backend steps 4 and 5
 
-### wait for student to finish recording ###
+wait for student to finish recording
   •	Steps 6-9 are done client side
 
     2.	Receive audio file from student
