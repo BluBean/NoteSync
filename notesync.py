@@ -19,7 +19,6 @@ from scipy.io.wavfile import write
 import numpy as np
 from pydub import AudioSegment
 import soundfile as sf
-from numpy.fft import fft, ifft
 import math
 from subprocess import call
 import scipy.io.wavfile as wavf
