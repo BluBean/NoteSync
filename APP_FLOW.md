@@ -24,18 +24,18 @@ Server
      4.	Send to send_data()
 
   Send_data(offsets)
-    1.	Backend steps 4 and 5
+     1.	Backend steps 4 and 5
 
 wait for student to finish recording
   •	Steps 6-9 are done client side
 
-    2.	Receive audio file from student
-    3.	Done receiving
-    4.	Close connection
+     2.	Receive audio file from student
+     3.	Done receiving
+     4.	Close connection
 
   Sync_files()
-    1.	Read received audio files
-    2.	Backend steps 10-12 (maybe don’t put step 12 in this function)
+     1.	Read received audio files
+     2.	Backend steps 10-12 (maybe don’t put step 12 in this function)
 
 Client
   1.	Enter student number (0-9)
