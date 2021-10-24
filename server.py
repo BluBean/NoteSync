@@ -53,7 +53,12 @@ def send_data(offsets):
         conn.send(bytes(offsets["9"], 'utf-8'))  # offset for student 9
     #print("Offset sent to student")
 
-    ##  after student is done recording, receive wav file from student
+    # wait for student to record and send audio file
+    print("wait start")
+    time.sleep(5)  # pause code for 5 seconds
+    print("wait stop")
+
+    ##  after student is done recording, receive audio file from student
     print("Receiving student wav file...")
     f = open('student' + decoded + '.wav', 'wb')
     l = conn.recv(4096)

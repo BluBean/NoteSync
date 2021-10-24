@@ -19,10 +19,6 @@ from scipy.io.wavfile import write
 import numpy as np
 from pydub import AudioSegment
 import soundfile as sf
-from numpy.fft import fft, ifft
-import math
-from subprocess import call
-import scipy.io.wavfile as wavf
 from sys import argv
 ## Import for metronome
 import time
@@ -61,7 +57,7 @@ class dsp:
     """
 
     #################################################################
-    # Calculates offset required based on user starting position
+    # Calculates offset required
     #
     # --- inputs:
     # beats = beats per measure (from selected time signature)
@@ -124,14 +120,18 @@ class dsp:
 ####Voice recorder MODULE
 ###########################################################
 class voicerecorder:
-    def record():
+    rec_samples = 1 * 48000  # hardcoded duration of recording (seconds)
+    def record(rec_samples, offset):
         fs = 48000  # Sample rate
-        seconds = 1  # Duration of recording
-        myrecording = sd.rec(int(seconds * fs), samplerate=fs, channels=2)
+        duration = rec_samples  # Duration of recording (samples)
+        print('offset (samples): ', offset)
+        # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
+        myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
         sd.wait()  # Wait until recording is finished
         # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('tick.wav', myrecording, fs, subtype='PCM_16')
-        print ('voice recording saved')
+        sf.write('audio1.wav', myrecording, fs, subtype='PCM_16')
+        print('voice recording saved')
+
 #############################
 # Metronome module
 #############################
