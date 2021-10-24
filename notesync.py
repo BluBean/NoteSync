@@ -120,7 +120,7 @@ class dsp:
 ####Voice recorder MODULE
 ###########################################################
 class voicerecorder:
-    rec_samples = 1 * 48000  # hardcoded duration of recording (seconds)
+    ## record(<samples in recording>, <samples in offset>)
     def record(rec_samples, offset):
         fs = 48000  # Sample rate
         duration = rec_samples  # Duration of recording (samples)
@@ -129,7 +129,7 @@ class voicerecorder:
         myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
         sd.wait()  # Wait until recording is finished
         # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('audio1.wav', myrecording, fs, subtype='PCM_16')
+        sf.write('test.wav', myrecording, fs, subtype='PCM_16')
         print('voice recording saved')
 
 #############################
@@ -248,7 +248,7 @@ measures_slider.pack()
 #button to start other modules
 def recorderlaunch():
     print('Recording in progress')
-    voicerecorder.record()
+    voicerecorder.record(96000, 0)
 
 def DSPlaunch(bpm, beats, num_meas):
     #print('sync files button worked')
