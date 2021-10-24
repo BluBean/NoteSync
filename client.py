@@ -11,6 +11,13 @@ port = 60001 # Reserve a port for your service.
 
 ###########################################################
 #### Voice recorder MODULE
+#
+# --- inputs ---
+# rec_samples = duration of recording (samples)
+# offset = buffer duration (samples)
+#
+# --- output ---
+# write to .wav file
 ###########################################################
 class voicerecorder:
     def record(rec_samples, offset):
@@ -21,12 +28,12 @@ class voicerecorder:
         myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
         sd.wait()  # Wait until recording is finished
         # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('audio1.wav', myrecording, fs, subtype='PCM_16')
+        sf.write('transmission1.wav', myrecording, fs, subtype='PCM_16')
         print('voice recording saved')
 
 
 
-
+### main client program ###
 if len(sys.argv) != 4:
     print("Syntax: python3 client.py <student number> <host> <wav file>")
     sys.exit(0)

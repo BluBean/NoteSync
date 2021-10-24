@@ -71,6 +71,6 @@ def send_data(offsets):
     conn.send(b'Thank you for connecting')
     conn.close()
 
-# run server.py
+### main server program ###
 while True:
     start_process()

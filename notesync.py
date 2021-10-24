@@ -117,7 +117,14 @@ class dsp:
         testvariables(bpm, beats, num_meas)
 
 ###########################################################
-####Voice recorder MODULE
+#### Voice recorder MODULE
+#
+# --- inputs ---
+# rec_samples = duration of recording (samples)
+# offset = buffer duration (samples)
+#
+# --- output ---
+# write to .wav file
 ###########################################################
 class voicerecorder:
     ## record(<samples in recording>, <samples in offset>)
