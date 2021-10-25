@@ -32,8 +32,9 @@ import socket  # Import socket module
 ###########################################################
 #### Server MODULE
 ###########################################################
-
-
+###########################################################
+#### Various functions
+###########################################################
 
 
 ###########################################################
@@ -78,6 +79,7 @@ class dsp:
         def read_audio(audio_file):
             rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
             return data, rate
+
 
         s1, fs1 = sf.read('audio1.wav')  # get data, samplerate
         info1 = sf.info('audio1.wav')
@@ -253,9 +255,12 @@ measures_slider.set(0)
 measures_slider.pack()
 
 #button to start other modules
-def recorderlaunch():
+def recorderlaunch(bpm, beats, num_meas):
     print('Recording in progress')
-    voicerecorder.record(96000, 0)
+    rec_length = beats * (num_meas / bpm)
+    samples = 4800 * 60 * rec_length  #length to record based on GUI (samples)
+    offset_size = 4800 * 60 * (beats/bpm)  # samples per measure or known as the amount of samples in an offset
+    voicerecorder.record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
 
 def DSPlaunch(bpm, beats, num_meas):
     #print('sync files button worked')
@@ -270,7 +275,7 @@ def start_stop(bpm, beats):
         gnomestatus = False
         gnome.metronome(bpm.get(), beats.get())
 
-record_button = Button(mainwindow, text='Record Voice File', command= recorderlaunch).pack()
+record_button = Button(mainwindow, text='Record Voice File', command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider)).pack()
 Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider)).pack()
 # global play
 image = Image.open('Off.png')
