@@ -22,6 +22,7 @@ import soundfile as sf
 from sys import argv
 ## Import for metronome
 import time
+import clienttest
 
 ####Imports for recorder module already called
 
@@ -167,8 +168,8 @@ class gnome:
                 mainwindow.after(1,start_stop(bpm_slider, time_sig_slider))
             time.sleep(sleep)
 
-def background(func, arg1, arg2):
-    t = threading.Thread(target=func, args= (arg1, arg2))
+def background(func, arg1, arg2, arg3):
+    t = threading.Thread(target=func, args= (arg1, arg2, arg3))
     t.start()
 
     # run metronome tool with given values
@@ -225,7 +226,8 @@ def save_command():
     file_selected = 1
 # command to run Client
 def runClient(student ,ipadd, filename ):
-    os.system('client.py 2 100.26.31.241 audio2.wav')
+    #os.system('client.py 2 100.26.31.241 audio2.wav')
+    clienttest.main(student, ipadd, filename)
 #create new menu options
 
 file_menu = Menu(main_menu)
@@ -237,11 +239,11 @@ file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
 # Button to activate 'client.py'
-student = 2
+student = '2'
 ipadd = '100.26.31.241'
 filename = 'audio2.wav'
 
-Clybutton = Button(mainwindow, text="Run Client",command= partial( runClient,student ,ipadd, filename ))
+Clybutton = Button(mainwindow, text="Run Client",command= partial( background,runClient,student ,ipadd, filename ))
 Clybutton.pack()
 
 #button to start other modules
