@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import socket, os, sys, time
+import socket, os, sys, time, threading
 port = 60001                  # Reserve a port for your service.
 s = socket.socket()             # Create a socket object
 host = socket.gethostname()
@@ -22,7 +22,7 @@ def calc_offsets():
     #        Stu  offset
     # Student 0   : 16
     # Student 1  :  2
-    return {"0":"16","1":"2", "2":"6"}  # student_num : offset value
+    return {"0":"0","1":"0", "2":"0", "3":"0", "4":"0"}  # student_num : offset value
 
 # Gives offset values to client
 def send_data(offsets):
@@ -70,6 +70,11 @@ def send_data(offsets):
     print('Done receiving')
     conn.send(b'Thank you for connecting')
     conn.close()
+
+def background(func, arg1, arg2):
+    t = threading.Thread(target=func, args= (arg1, arg2))
+    t.start()
+
 
 ### main server program ###
 while True:
