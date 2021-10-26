@@ -11,7 +11,7 @@ def main(student, host, file):
     # student = sys.argv[1]
     # host = sys.argv[2]
     #  file = sys.argv[3]
-    port = 60001  # Reserve a port for your service.
+    port = 60002  # Reserve a port for your service.
 
     ###########################################################
     #### Voice recorder MODULE
