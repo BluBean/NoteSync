@@ -224,8 +224,8 @@ def save_command():
     file_path = filedialog.asksaveasfilename()
     file_selected = 1
 # command to run Client
-def runClient():
-    os.system('client.py')
+def runClient(student ,ipadd, filename ):
+    os.system('client.py 2 100.26.31.241 audio2.wav')
 #create new menu options
 
 file_menu = Menu(main_menu)
@@ -237,7 +237,11 @@ file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
 # Button to activate 'client.py'
-Clybutton = Button(mainwindow, text="Run Client",command= runClient)
+student = 2
+ipadd = '100.26.31.241'
+filename = 'audio2.wav'
+
+Clybutton = Button(mainwindow, text="Run Client",command= partial( runClient,student ,ipadd, filename ))
 Clybutton.pack()
 
 #button to start other modules
