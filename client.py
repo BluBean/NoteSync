@@ -28,7 +28,7 @@ class voicerecorder:
         myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
         sd.wait()  # Wait until recording is finished
         # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('transmission1.wav', myrecording, fs, subtype='PCM_16')
+        sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
         print('voice recording saved')
 
 
@@ -80,5 +80,5 @@ while not connected:
         pass #Do nothing, just try again
 """
 
-### terminal command (python3 <file> <student#> <AWS ip> <audioX.wav file>)
+### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
 # python3 client.py 1 100.26.31.241 audio1.wav
