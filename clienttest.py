@@ -25,7 +25,7 @@ def main(student, host, file):
     ###########################################################
     class voicerecorder:
         def record(rec_samples, offset):
-            print('checkpoint recorder')
+            #print('checkpoint recorder')
             fs = 48000  # Sample rate
             duration = rec_samples  # Duration of recording (samples)
             print('offset (samples): ', offset)
@@ -40,26 +40,26 @@ def main(student, host, file):
     if len(params) != 3:
         print("Syntax: python3 client.py <student number> <host> <wav file>")
         sys.exit(0)
-    print ('checkpoint 1')
+   # print ('checkpoint 1')
     # add check to verify file exists or quit
     if not os.path.exists(file):
         print(file + " does not exist. Exiting.")
         sys.exit(0)
-    print('checkpoint 2')
+    #print('checkpoint 2')
    #if int(student) > 9 or int(student) < 0:
    #     print("Student number is invalid. Valid student numbers are 0-9.")
    #     sys.exit(0)
 
     # send the recorded file back to server
     with open(file, 'rb') as f:
-        print('checkpoint 3')
+       # print('checkpoint 3')
         # Send student number, get offset
         s.connect((host, port))
-        print('checkpoint 4')
+        #print('checkpoint 4')
         s.send(str.encode(student))
-        print('checkpoint 5')
+        #print('checkpoint 5')
         offset = s.recv(1024)  # get and store offset value for student (samples)
-        print('checkpoint 6')
+        #print('checkpoint 6')
         print(offset)
         # record and save recording
         voicerecorder.record(480000, offset)  # (<duration of recording>, <offset>) (samples)
