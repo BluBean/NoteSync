@@ -1,6 +1,6 @@
 ########################################
 #Main GUI for Notesync
-#    Last edited 10/16/2021 @12:27 MST time
+#    Last edited 10/25/2021 @18:16 MST time
 #
 ########################################
 #imports for GUI module
