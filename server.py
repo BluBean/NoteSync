@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import socket, os, sys, time, threading
-port = 60001                  # Reserve a port for your service.
+import socket, os, sys, time, threading, json
+port = 60002                  # Reserve a port for your service.
 s = socket.socket()             # Create a socket object
 host = socket.gethostname()
 
@@ -55,7 +55,8 @@ def send_data(offsets):
 
     # wait for student to record and send audio file
     print("wait start")
-    time.sleep(5)  # pause code for 5 seconds
+    # test this with multiple people running simultaneously
+    #time.sleep(5)  # pause code for 5 seconds
     print("wait stop")
 
     ##  after student is done recording, receive audio file from student
@@ -70,11 +71,6 @@ def send_data(offsets):
     print('Done receiving')
     conn.send(b'Thank you for connecting')
     conn.close()
-
-def background(func, arg1, arg2):
-    t = threading.Thread(target=func, args= (arg1, arg2))
-    t.start()
-
 
 ### main server program ###
 while True:

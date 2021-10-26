@@ -7,7 +7,7 @@ s = socket.socket() # Create a socket object
 student = sys.argv[1]
 host = sys.argv[2]
 file = sys.argv[3]
-port = 60001 # Reserve a port for your service.
+port = 60002 # Reserve a port for your service.
 
 ###########################################################
 #### Voice recorder MODULE
@@ -56,7 +56,7 @@ with open (file,'rb') as f:
     offset = s.recv(1024)  # get and store offset value for student (samples)
     print(offset)
     # record and save recording
-    voicerecorder.record(96000, offset)  # (<duration of recording>, <offset>) (samples)
+    voicerecorder.record(480000, offset)  # (<duration of recording>, <offset>) (samples)
 
     print("Sending...")
     l = f.read(4096)
