@@ -223,7 +223,9 @@ def new_command():
 def save_command():
     file_path = filedialog.asksaveasfilename()
     file_selected = 1
-
+# command to run Client
+def runClient():
+    os.system('client.py')
 #create new menu options
 
 file_menu = Menu(main_menu)
@@ -234,9 +236,10 @@ file_menu.add_command(label="Save Location", command=save_command)
 file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
-# Button to activate 'client.py' NOT FINISHED, PLACEHOLDER
-Clybutton = Button(mainwindow, text="Run Client",command=mainwindow.destroy )
+# Button to activate 'client.py'
+Clybutton = Button(mainwindow, text="Run Client",command= runClient)
 Clybutton.pack()
+
 #button to start other modules
 def recorderlaunch(bpm, beats, num_meas):
     print('Recording in progress')
