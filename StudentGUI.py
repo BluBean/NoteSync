@@ -168,8 +168,8 @@ class gnome:
                 mainwindow.after(1,start_stop(bpm_slider, time_sig_slider))
             time.sleep(sleep)
 
-def background(func, arg1, arg2, arg3):
-    t = threading.Thread(target=func, args= (arg1, arg2, arg3))
+def background(func, arg1, arg2):
+    t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
 
     # run metronome tool with given values
@@ -225,9 +225,11 @@ def save_command():
     file_path = filedialog.asksaveasfilename()
     file_selected = 1
 # command to run Client
-def runClient(student ,ipadd, filename ):
+def runClient(student ,ipadd):
     #os.system('client.py 2 100.26.31.241 audio2.wav')
-    clienttest.main(student, ipadd, filename)
+    stu = student.get()
+    filename = 'audio' + stu + '.wav'
+    clienttest.main(stu, ipadd, filename)
 #create new menu options
 
 file_menu = Menu(main_menu)
@@ -239,12 +241,19 @@ file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
 # Button to activate 'client.py'
-student = '2'
+#student = '2'
 ipadd = '100.26.31.241'
-filename = 'audio2.wav'
+#filename = 'audio2.wav'
+current_value = '0'
+student_label = Label(mainwindow, text ="Student number select")
+student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True)
 
-Clybutton = Button(mainwindow, text="Run Client",command= partial( background,runClient,student ,ipadd, filename ))
+Clybutton = Button(mainwindow, text="Run Client",command= partial( background,runClient,student_spin ,ipadd))
 Clybutton.pack()
+student_label.pack()
+student_spin.pack()
+
+
 
 #button to start other modules
 def recorderlaunch(bpm, beats, num_meas):
