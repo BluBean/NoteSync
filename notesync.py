@@ -216,6 +216,7 @@ mainwindow.iconbitmap("NoteSync_icon.ico")
 mainwindow.geometry("700x700")
 main_menu = Menu(mainwindow)
 mainwindow.config(menu=main_menu)
+mainwindow.config(background='gray')
 
 #menu commands
 def new_command():
@@ -245,7 +246,7 @@ time_sig_slider.set(4)
 time_sig_slider.pack()
 time_sigd_label = Label(mainwindow, text ="Time Signature Denominator")#, bg="red", fg ="white")
 time_sigd_label.pack()
-time_sigd_slider = Scale(mainwindow, from_=1, to=16,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
+time_sigd_slider = Scale(mainwindow, from_=1, to=8,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
 time_sigd_slider.set(4)
 time_sigd_slider.pack()
 measures_label = Label(mainwindow, text ="Total Measures")#, bg="red", fg ="white")
