@@ -1,77 +1,151 @@
 #!/usr/bin/env python3
 
-import socket, os, sys, time, threading, json
-port = 60002                  # Reserve a port for your service.
-s = socket.socket()             # Create a socket object
-host = socket.gethostname()
+# Imports
+import socket
+import threading
+from _thread import *
+from typing import List
 
-# Get local machine name
-s.bind((host, port))
-# Bind to the port
-s.listen()                     # Now wait for client connection.
+# Globals
+PORT = 60002
+CONNECTIONS = {}
+CONN_LOCK = False
 
-print('Server listening....')
-is_finished_recording = False
 
-# main function
-def start_process():
-    send_data(calc_offsets())  # get all data inputted by teacher, then send data to get_audio()
+# allow for threading client connections
+class ServerThread(threading.Thread):
+    def __init__(self, caddr, cconn, offsets):
+        threading.Thread.__init__(self)
+        self.caddr = caddr
+        self.cconn = cconn
+        self.offsets = offsets
+        print(f"New connection {self.caddr}")
 
-def calc_offsets():
-    # Get all data that teacher inputted, send data to getAudio
-    #        Stu  offset
-    # Student 0   : 16
-    # Student 1  :  2
-    return {"0":"0","1":"0", "2":"0", "3":"0", "4":"0"}  # student_num : offset value
+    def run(self):
+        global CONNECTIONS
+        global CONN_LOCK
+        try:
+            download_seq(self.cconn, self.caddr, self.offsets)
+        except:
+            self.cconn.close()
+            print("Failed to download from student")
+            pass
+        # Remove from connections list
+        while CONN_LOCK:
+            pass
+        CONN_LOCK = True
+        CONNECTIONS.pop(self.caddr)
+        CONN_LOCK = False
 
-# Gives offset values to client
-def send_data(offsets):
-    conn, addr = s.accept()  # Establish connection with client.
-    print('Got connection from', addr)
-    print("Receiving student number...")
-    first_byte = conn.recv(1)
-    decoded = first_byte.decode()
-    if int(decoded) == 0:
-        conn.send(bytes(offsets["0"], 'utf-8'))  # offset for student 0
-    elif int(decoded) == 1:
-        conn.send(bytes(offsets["1"], 'utf-8'))  # offset for student 1
-    elif int(decoded) == 2:
-        conn.send(bytes(offsets["2"], 'utf-8'))  # offset for student 2
-    elif int(decoded) == 3:
-        conn.send(bytes(offsets["3"], 'utf-8'))  # offset for student 3
-    elif int(decoded) == 4:
-        conn.send(bytes(offsets["4"], 'utf-8'))  # offset for student 4
-    elif int(decoded) == 5:
-        conn.send(bytes(offsets["5"], 'utf-8'))  # offset for student 5
-    elif int(decoded) == 6:
-        conn.send(bytes(offsets["6"], 'utf-8'))  # offset for student 6
-    elif int(decoded) == 7:
-        conn.send(bytes(offsets["7"], 'utf-8'))  # offset for student 7
-    elif int(decoded) == 8:
-        conn.send(bytes(offsets["8"], 'utf-8'))  # offset for student 8
-    elif int(decoded) == 9:
-        conn.send(bytes(offsets["9"], 'utf-8'))  # offset for student 9
-    #print("Offset sent to student")
 
-    # wait for student to record and send audio file
-    print("wait start")
-    # test this with multiple people running simultaneously
-    #time.sleep(5)  # pause code for 5 seconds
-    print("wait stop")
+def create_socket():
+    '''
+    Create socket for listening.
+    '''
+    # Create TCP socket and set options
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.settimeout(20)
 
-    ##  after student is done recording, receive audio file from student
+    # Grab host addr
+    host = socket.gethostname()
+
+    # Bind to port
+    s.bind((host, PORT))
+    #s.bind(("127.0.0.1", PORT))  # local
+
+    return s
+
+
+# use values retrieved from server GUI to calculate offset
+def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
+    '''
+    bpm : bpm
+    num_measures: number of measures for offset to be
+    tot_measures: total number of measures
+
+    returns: number of samples gets returned
+    '''
+    value = "0"
+    return value
+
+
+# retrieve metronome values from GUI for use in calculations
+def pull_values():
+    """
+    Pull values from metronome.
+    """
+    return 0, 0, 0
+
+
+# store calculated offsets in dictionary
+def get_offsets(ids: List) -> dict:
+    store = {}
+    bpm, num_measures, tot_measures = pull_values()
+    for val in ids:
+        store[val] = wav_file_calculation(bpm, num_measures, tot_measures)
+    return store
+
+
+def download_seq(conn, addr, offsets):
+    global CONNECTIONS
+    # Decide the student number
+    sid = int(conn.recv(1).decode())
+
+    # Send back offset
+    conn.send(bytes(offsets[sid], 'utf-8'))
+
+    # Try to receive the WAV
     print("Receiving student wav file...")
-    f = open('student' + decoded + '.wav', 'wb')
-    l = conn.recv(4096)
-    while (l):
-        print("Receiving...")
-        f.write(l)
-        l = conn.recv(4096)
-    f.close()
-    print('Done receiving')
-    conn.send(b'Thank you for connecting')
+
+    # write to corresponding student audio file
+    with open(f"student_{sid}.wav", "wb") as f:
+        data = conn.recv(4096)
+        while data:
+            print(f"Receiving {len(data)} bytes...")
+            f.write(data)
+            data = conn.recv(4096)
+
+    print("Done receiving the bacon")
+    conn.send(b"Thank you for connecting. Please come again!")
     conn.close()
 
-### main server program ###
-while True:
-    start_process()
+
+def serve(ids):
+    """
+    Start socket server
+    """
+    global CONNECTIONS
+    global CONN_LOCK
+
+    s = create_socket()
+
+    print('Server listening....')
+
+    # store offsets from offset calculator to send to client
+    offsets = get_offsets(ids)
+
+    while True:
+        s.listen(1)
+        # Catch connection
+        try:
+            conn, addr = s.accept()
+        except socket.timeout:  # stop listening after timeout (sec)
+            break
+        st = ServerThread(addr, conn, offsets)
+
+        # make sure threads don't mess with each other
+        while CONN_LOCK:
+            pass
+        CONN_LOCK = True
+        CONNECTIONS[addr] = conn
+        CONN_LOCK = False
+        st.start()  # start thread
+
+    # keep processing until no connections remain
+    while len(CONNECTIONS) > 0:
+        pass
+
+
+serve([1, 3, 4, 5])
+# do other things
