@@ -278,9 +278,9 @@ S5.pack()
 #button to start other modules
 def recorderlaunch(bpm, beats, num_meas):
     print('Recording in progress')
-    rec_length = beats * (num_meas / bpm) #length in seconds
+    rec_length = beats.get() * (num_meas.get() / bpm.get()) #length in seconds
     samples = 48000 * 60 * rec_length  #length to record based on GUI (samples)
-    offset_size = 48000 * 60 * (beats/bpm)  # samples per measure or known as the amount of samples in an offset
+    offset_size = 48000 * 60 * (beats.get()/bpm.get())  # samples per measure or known as the amount of samples in an offset
     voicerecorder.record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
 
 def DSPlaunch(bpm, beats, num_meas):
