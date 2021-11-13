@@ -22,7 +22,6 @@ import soundfile as sf
 from sys import argv
 ## Import for metronome
 import time
-
 ####Imports for recorder module already called
 
 #### Imports for server module
@@ -226,6 +225,8 @@ def save_command():
     file_selected = 1
 
 #create new menu options
+
+
 
 file_menu = Menu(main_menu)
 main_menu.add_cascade(label="File",menu=file_menu)
