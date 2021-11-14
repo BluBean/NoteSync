@@ -9,6 +9,7 @@ host = sys.argv[2]
 file = sys.argv[3]
 port = 60002 # Reserve a port for your service.
 
+
 ###########################################################
 #### Voice recorder MODULE
 #
@@ -82,3 +83,4 @@ while not connected:
 
 ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
 # python3 client.py 1 100.26.31.241 audio1.wav
+

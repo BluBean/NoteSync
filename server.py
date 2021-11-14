@@ -446,7 +446,7 @@ play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 
 #Opening the maintask window with some random stuff to fil the window
 #two = Label(mainwindow, text ="TBD", bg="green", fg ="black")
 #two.pack(fill=X)
-three = Label(mainwindow, text ="TBD", bg="blue", fg ="white")
-three.pack(side=LEFT, fill=Y)
+#three = Label(mainwindow, text ="TBD", bg="blue", fg ="white")
+#three.pack(side=LEFT, fill=Y)
 
 mainwindow.mainloop()
