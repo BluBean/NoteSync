@@ -382,6 +382,7 @@ measures_label.pack()
 measures_slider = Scale(mainwindow, from_=1, to=80,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
 measures_slider.set(0)
 measures_slider.pack()
+
 # Dropbox for delays
 Delay1_label = Label(mainwindow, text ="Student 1 Delay (whole measures)")
 Delay1_label.pack()
@@ -403,6 +404,11 @@ Delay5_label = Label(mainwindow, text ="Student 5 Delay (whole measures)")
 Delay5_label.pack()
 S5 = Spinbox(mainwindow, from_ = 0, to = 9)
 S5.pack()
+
+#Store Delay values in a list and send it to get_offsets
+Delay_Values = [S1, S2, S3, S4, S5]
+get_offsets(Delay_Values)
+
 #button to start other modules
 def recorderlaunch(bpm, beats, num_meas):
     print('Recording in progress')
