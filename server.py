@@ -167,7 +167,7 @@ def serve(ids):
         pass
 
 
-serve([1, 3, 4, 5])
+#serve([1, 3, 4, 5])
 
 ###########################################################
 ####DSP MODULE
@@ -419,6 +419,9 @@ def DSPlaunch(bpm, beats, num_meas):
     #print('sync files button worked')
     dsp.syncfiles(bpm.get(), beats.get(), num_meas.get())
 
+def serverlaunch():
+    serve([1, 3, 4, 5])
+
 def start_stop(bpm, beats):
     global gnomestatus
     if var.get()== 1:
@@ -430,6 +433,8 @@ def start_stop(bpm, beats):
 
 record_button = Button(mainwindow, text='Record Voice File', command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
 record_button.place(x=500, y=10)
+start_server = Button(mainwindow, text='Open Server',command= serverlaunch) #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
+start_server.place(x=270, y=140)
 sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider))
 sync_files.place(x=525, y=50)
 # global play
