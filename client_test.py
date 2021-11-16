@@ -36,7 +36,7 @@ class voicerecorder:
 
 ### main client program ###
 if len(sys.argv) != 4:
-    print("Syntax: python3 TestClient.py <student number> <host> <wav file>")
+    print("Syntax: python3 client_test.py <student number> <host> <wav file>")
     sys.exit(0)
 
 # add check to verify file exists or quit
@@ -57,7 +57,7 @@ with open (file,'rb') as f:
     offset = s.recv(1024)  # get and store offset value for student (samples)
     print(offset)
     # record and save recording
-    voicerecorder.record(480000, offset)  # (<duration of recording>, <offset>) (samples)
+    voicerecorder.record(240000, offset)  # (<duration of recording>, <offset>) (samples)
 
     print("Sending...")
     l = f.read(4096)
@@ -82,5 +82,5 @@ while not connected:
 """
 
 ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
-# python3 TestClient.py 1 100.26.31.241 audio1.wav
+# python3 client_test.py 1 172.31.20.157 audio1.wav
 

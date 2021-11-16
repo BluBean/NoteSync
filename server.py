@@ -202,6 +202,7 @@ class dsp:
     # --- output:
     # duration = milliseconds of buffer required
     #################################################################
+
     def testvariables(bpm, beats, num_meas):
         print("this is test of gui sliders \n bpm = ", bpm, "\n beats= ", beats, "\n measures= ", num_meas)
 
@@ -456,3 +457,4 @@ play.place(x=500, y=90)
 #three.pack(side=LEFT, fill=Y)
 
 mainwindow.mainloop()
+
