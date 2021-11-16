@@ -237,13 +237,13 @@ file_menu.add_command(label="Exit", command=mainwindow.quit)
 #BPM and time signature slider scale
 #BPM and time signature slider scale
 bpm_label = Label(mainwindow, text ="Beats Per Minute")#, bg="red", fg ="gray")
-<<<<<<< HEAD
+
 bpm_label.place(x=175, y=10)
 bpm_slider = Scale(mainwindow, from_=1, to=200, orient=HORIZONTAL, bg = 'gray') #, tickinterval=100,orient=HORIZONTAL)
-=======
+
 bpm_label.pack()
 bpm_slider = Scale(mainwindow, from_=1, to=200, bg = 'gray') #, tickinterval=100,orient=HORIZONTAL)
->>>>>>> 723f6d2d65d8b749ed317a8906a9320aa9656fc9
+
 bpm_slider.set(100)
 bpm_slider.place(x=325, y=10)
 time_sig_label = Label(mainwindow, text ="Time Signature Numerator")#, bg="red", fg ="gray")
@@ -262,7 +262,7 @@ measures_slider = Scale(mainwindow, from_=1, to=80,orient=HORIZONTAL, bg = 'gray
 measures_slider.set(0)
 #measures_slider.pack()
 # Dropbox for delays
-<<<<<<< HEAD
+
 Delay1_label = Label(mainwindow, text ="Student 1 Delay")
 Delay1_label.place(x=10, y=10)
 S1 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"))
@@ -286,7 +286,7 @@ S5.place(x=98, y=90)
 Delay6_label = Label(mainwindow, text ="(whole measures)")
 Delay6_label.place(x=15, y=110)
 #(whole measures)
-=======
+
 Delay1_label = Label(mainwindow, text ="Student 1 Delay (whole measures)", bg = 'gray')
 Delay1_label.pack()
 S1 = Spinbox(mainwindow, from_ = 0, to = 9)
@@ -307,7 +307,7 @@ Delay5_label = Label(mainwindow, text ="Student 5 Delay (whole measures)", bg = 
 Delay5_label.pack()
 S5 = Spinbox(mainwindow, from_ = 0, to = 9)
 S5.pack()
->>>>>>> 723f6d2d65d8b749ed317a8906a9320aa9656fc9
+
 #button to start other modules
 def recorderlaunch(bpm, beats, num_meas):
     print('Recording in progress')
