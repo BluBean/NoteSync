@@ -299,7 +299,7 @@ def authors():
 mainwindow = Tk()
 mainwindow.title("NoteSync")
 mainwindow.iconbitmap("NoteSync_icon.ico")
-mainwindow.geometry("700x700")
+mainwindow.geometry("300x100")
 main_menu = Menu(mainwindow)
 mainwindow.config(menu=main_menu)
 
