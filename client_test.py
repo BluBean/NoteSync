@@ -55,7 +55,11 @@ with open (file,'rb') as f:
     s.connect((host, port))
     s.send(str.encode(student))
     offset = s.recv(1024)  # get and store offset value for student (samples)
-    print(offset)
+    #print(offset)
+    metronome = s.recv(1024)  # get and store metronome values in a list (bpm, num_measures, tot_measures)
+    print(metronome)
+    bpm, num_measures, tot_measures = metronome.split(b',')
+    print('bpm: ', bpm, 'num_measures: ', num_measures, 'tot_measures: ', tot_measures)
     # record and save recording
     voicerecorder.record(240000, offset)  # (<duration of recording>, <offset>) (samples)
 
@@ -82,5 +86,5 @@ while not connected:
 """
 
 ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
-# python3 client_test.py 1 172.31.20.157 audio1.wav
+# python3 client_test.py 1 18.220.239.193 audio1.wav
 

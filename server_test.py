@@ -15,11 +15,12 @@ CONN_LOCK = False
 
 # allow for threading client connections
 class ServerThread(threading.Thread):
-    def __init__(self, caddr, cconn, offsets):
+    def __init__(self, caddr, cconn, offsets, metronome):
         threading.Thread.__init__(self)
         self.caddr = caddr
         self.cconn = cconn
         self.offsets = offsets
+        self.metronome = metronome
         print(f"New connection {self.caddr}")
 
 
@@ -27,7 +28,7 @@ class ServerThread(threading.Thread):
         global CONNECTIONS
         global CONN_LOCK
         try:
-            download_seq(self.cconn, self.caddr, self.offsets)
+            download_seq(self.cconn, self.caddr, self.offsets, self.metronome)
         except:
             self.cconn.close()
             print("Failed to download from student")
@@ -53,8 +54,8 @@ def create_socket():
     host = socket.gethostname()
 
     # Bind to port
-    #s.bind((host, PORT))
-    s.bind(("127.0.0.1", PORT))  # local
+    s.bind((host, PORT))
+    #s.bind(("127.0.0.1", PORT))  # local
 
     return s
 
@@ -88,14 +89,20 @@ def get_offsets(ids: List) -> dict:
         store[val] = wav_file_calculation(bpm, num_measures, tot_measures)
     return store
 
+# store metronome values in string
+def get_metronome() -> str:
+    bpm, num_measures, tot_measures = pull_values()
+    return str(bpm) + "," + str(num_measures) + "," + str(tot_measures)
 
-def download_seq(conn, addr, offsets):
+def download_seq(conn, addr, offsets, metronome):
     global CONNECTIONS
     # Decide the student number
     sid = int(conn.recv(1).decode())
 
     # Send back offset
     conn.send(bytes(offsets[sid], 'utf-8'))
+    # Send metronome
+    conn.send(bytes(metronome, 'utf-8'))
 
     # Try to receive the WAV
     print("Receiving student wav file...")
@@ -126,6 +133,8 @@ def serve(ids):
 
     # store offsets from offset calculator to send to client
     offsets = get_offsets(ids)
+    # store metronome values from GUI to send to client
+    metronome = get_metronome()
 
     while True:
         s.listen(1)
@@ -134,7 +143,8 @@ def serve(ids):
             conn, addr = s.accept()
         except socket.timeout:  # stop listening after timeout (sec)
             break
-        st = ServerThread(addr, conn, offsets)
+        st = ServerThread(addr, conn, offsets, metronome)
+        #st = ServerThread(addr, conn, offsets)
 
         # make sure threads don't mess with each other
         while CONN_LOCK:
