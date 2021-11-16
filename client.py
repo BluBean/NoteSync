@@ -108,7 +108,7 @@ def main(student, host, file):
     """
 
     ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
-    # python3 TestClient.py 1 100.26.31.241 audio1.wav
+    # python3 client.py 1 34.227.191.116 audio1.wav
 
 
 """if __name__=='__main__':
@@ -363,3 +363,4 @@ def start_stop(bpm, beats):
 
 
 mainwindow.mainloop()
+
