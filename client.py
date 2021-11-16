@@ -334,9 +334,10 @@ student_label = Label(mainwindow, text ="Student number select")
 student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True)
 
 Clybutton = Button(mainwindow, text="Run Client",command= partial( background,runClient,student_spin ,ipadd))
-Clybutton.pack()
+
 student_label.pack()
 student_spin.pack()
+Clybutton.pack()
 
 
 
