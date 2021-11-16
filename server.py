@@ -41,6 +41,7 @@ class ServerThread(threading.Thread):
         self.offsets = offsets
         print(f"New connection {self.caddr}")
 
+
     def run(self):
         global CONNECTIONS
         global CONN_LOCK
