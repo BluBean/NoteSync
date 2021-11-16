@@ -87,7 +87,10 @@ def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
 
     returns: number of samples gets returned
     '''
-    value = "0"
+    #Find duration for offset and main piece and combine the values for total number of samples
+    Dur_Offset = dsp.calc_duration(bpm, time_sig_slider, num_measures)
+    Dur_Main = dsp.calc_duration(bpm, time_sig_slider, tot_measures)
+    value = Dur_Main + Dur_Offset
     return value
 
 
@@ -96,7 +99,10 @@ def pull_values():
     """
     Pull values from metronome.
     """
-    return 0, 0, 0
+    bpm_value = bpm_slider.get()
+
+
+    return bpm_value, 0, 0
 
 
 # store calculated offsets in dictionary
@@ -381,10 +387,10 @@ time_sigd_slider = Scale(mainwindow, from_=1, to=8,orient=HORIZONTAL)   #,tickin
 time_sigd_slider.set(4)
 time_sigd_slider.place(x=325, y=90)
 measures_label = Label(mainwindow, text ="Total Measures")#, bg="red", fg ="gray")
-#measures_label.pack()
+measures_label.place(x=175, y =140)
 measures_slider = Scale(mainwindow, from_=1, to=80,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
-measures_slider.set(0)
-#measures_slider.pack()
+measures_slider.set(8)
+measures_slider.place(x=325, y=130)
 # Dropbox for delays
 Delay1_label = Label(mainwindow, text ="Student 1 Delay")
 Delay1_label.place(x=10, y=10)
@@ -436,7 +442,7 @@ def start_stop(bpm, beats):
 record_button = Button(mainwindow, text='Record Voice File', command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
 record_button.place(x=500, y=10)
 start_server = Button(mainwindow, text='Open Server',command= serverlaunch) #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
-start_server.place(x=270, y=140)
+start_server.place(x=520, y=150)
 sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider))
 sync_files.place(x=525, y=50)
 # global play
