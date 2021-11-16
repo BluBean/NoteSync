@@ -36,7 +36,7 @@ class voicerecorder:
 
 ### main client program ###
 if len(sys.argv) != 4:
-    print("Syntax: python3 client.py <student number> <host> <wav file>")
+    print("Syntax: python3 TestClient.py <student number> <host> <wav file>")
     sys.exit(0)
 
 # add check to verify file exists or quit
@@ -82,5 +82,5 @@ while not connected:
 """
 
 ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
-# python3 client.py 1 100.26.31.241 audio1.wav
+# python3 TestClient.py 1 100.26.31.241 audio1.wav
 

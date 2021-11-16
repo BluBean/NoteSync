@@ -22,7 +22,7 @@ import soundfile as sf
 from sys import argv
 ## Import for metronome
 import time
-import clienttest
+import Client
 
 ####Imports for recorder module already called
 
@@ -226,10 +226,10 @@ def save_command():
     file_selected = 1
 # command to run Client
 def runClient(student ,ipadd):
-    #os.system('client.py 2 100.26.31.241 audio2.wav')
+    #os.system('TestClient.py 2 100.26.31.241 audio2.wav')
     stu = student.get()
     filename = 'audio' + stu + '.wav'
-    clienttest.main(stu, ipadd, filename)
+    Client.main(stu, ipadd, filename)
 #create new menu options
 
 file_menu = Menu(main_menu)
@@ -240,7 +240,7 @@ file_menu.add_command(label="Save Location", command=save_command)
 file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
-# Button to activate 'client.py'
+# Button to activate 'TestClient.py'
 #student = '2'
 ipadd = '100.26.31.241'
 #filename = 'audio2.wav'

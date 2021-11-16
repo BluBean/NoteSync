@@ -58,7 +58,7 @@ def main(student, host, file):
 
     ### main client program ###
     if len(params) != 3:
-        print("Syntax: python3 client.py <student number> <host> <wav file>")
+        print("Syntax: python3 TestClient.py <student number> <host> <wav file>")
         sys.exit(0)
    # print ('checkpoint 1')
     # add check to verify file exists or quit
@@ -108,7 +108,7 @@ def main(student, host, file):
     """
 
     ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
-    # python3 client.py 1 100.26.31.241 audio1.wav
+    # python3 TestClient.py 1 100.26.31.241 audio1.wav
 
 
 """if __name__=='__main__':
@@ -311,7 +311,7 @@ def save_command():
     file_selected = 1
 # command to run Client
 def runClient(student ,ipadd):
-    #os.system('client.py 2 100.26.31.241 audio2.wav')
+    #os.system('TestClient.py 2 100.26.31.241 audio2.wav')
     stu = student.get()
     filename = 'audio' + stu + '.wav'
     main(stu, ipadd, filename)
@@ -325,7 +325,7 @@ file_menu.add_command(label="Save Location", command=save_command)
 file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
-# Button to activate 'client.py'
+# Button to activate 'TestClient.py'
 #student = '2'
 ipadd = '100.26.31.241'
 #filename = 'audio2.wav'
