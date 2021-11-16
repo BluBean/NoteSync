@@ -237,7 +237,7 @@ file_menu.add_command(label="Exit", command=mainwindow.quit)
 #BPM and time signature slider scale
 bpm_label = Label(mainwindow, text ="Beats Per Minute")#, bg="red", fg ="gray")
 bpm_label.pack()
-bpm_slider = Scale(mainwindow, from_=1, to=200) #, tickinterval=100,orient=HORIZONTAL)
+bpm_slider = Scale(mainwindow, from_=1, to=200, bg = 'gray') #, tickinterval=100,orient=HORIZONTAL)
 bpm_slider.set(100)
 bpm_slider.pack()
 time_sig_label = Label(mainwindow, text ="Time Signature Numerator")#, bg="red", fg ="gray")
