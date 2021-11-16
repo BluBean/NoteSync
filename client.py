@@ -312,6 +312,7 @@ def save_command():
 # command to run Client
 def runClient(student ,ipadd):
     #os.system('TestClient.py 2 100.26.31.241 audio2.wav')
+    print(ipadd)
     stu = student.get()
     filename = 'audio' + stu + '.wav'
     main(stu, ipadd, filename)
@@ -327,7 +328,7 @@ file_menu.add_command(label="Exit", command=mainwindow.quit)
 
 # Button to activate 'TestClient.py'
 #student = '2'
-ipadd = '100.26.31.241'
+ipadd = '172.31.20.157'
 #filename = 'audio2.wav'
 current_value = '0'
 student_label = Label(mainwindow, text ="Student number select")
