@@ -31,7 +31,7 @@ import socket  # Import socket module
 
 
 ###########################################################
-#### Server MODULE
+#### Client MODULE
 ###########################################################
 ###########################################################
 #### Various functions
@@ -266,7 +266,7 @@ def recorderlaunch(bpm, beats, num_meas):
 def DSPlaunch(bpm, beats, num_meas):
     #print('sync files button worked')
     dsp.syncfiles(bpm.get(), beats.get(), num_meas.get())
-
+'''
 def start_stop(bpm, beats):
     global gnomestatus
     if var.get()== 1:
@@ -275,7 +275,7 @@ def start_stop(bpm, beats):
     else:
         gnomestatus = False
         gnome.metronome(bpm.get(), beats.get())
-
+'''
 
 mainwindow.mainloop()
 
