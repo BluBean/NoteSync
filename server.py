@@ -201,17 +201,18 @@ class dsp:
     # --- output:
     # duration = milliseconds of buffer required
     #################################################################
+    def testvariables(bpm, beats, num_meas):
+        print("this is test of gui sliders \n bpm = ", bpm, "\n beats= ", beats, "\n measures= ", num_meas)
+
+    def calc_duration(bpm, beats, num_meas):
+        duration = beats * (num_meas / bpm)
+        print('duration: ', duration)
+
+    def read_audio(audio_file):
+        rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
+        return data, rate
+
     def syncfiles(bpm, beats, num_meas):
-        def testvariables(bpm, beats, num_meas):
-            print ("this is test of gui sliders \n bpm = ", bpm,"\n beats= ", beats,"\n measures= ", num_meas)
-        def calc_duration(bpm, beats, num_meas):
-            duration = beats * (num_meas / bpm)
-            print('duration: ', duration)
-
-        def read_audio(audio_file):
-            rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
-            return data, rate
-
 
         s1, fs1 = sf.read('audio1.wav')  # get data, samplerate
         info1 = sf.info('audio1.wav')
@@ -248,7 +249,7 @@ class dsp:
         boost1 = audio1 + 9  # audio1 x dB louder (clipping)
         overlay = boost1.overlay(audio2, position=0)  # Overlay audio2 over audio1
         file_handle = overlay.export("buffered_overlay.wav", format="wav")  # export overlaid wav files
-        testvariables(bpm, beats, num_meas)
+        dsp.testvariables(bpm, beats, num_meas)
 
 ###########################################################
 #### Voice recorder MODULE
