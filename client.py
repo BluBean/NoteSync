@@ -30,7 +30,7 @@ def main(student, host, file):
     s = socket.socket()  # Create a socket object
     # student = sys.argv[1]
     # host = sys.argv[2]
-    #  file = sys.argv[3]
+    # file = sys.argv[3]
     port = 60002  # Reserve a port for your service.
 
     ###########################################################
@@ -108,7 +108,7 @@ def main(student, host, file):
     """
 
     ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
-    # python3 client.py 1 34.227.191.116 audio1.wav
+    # python3 client.py 1 18.220.239.193 audio1.wav
 
 
 """if __name__=='__main__':
@@ -311,7 +311,7 @@ def save_command():
     file_selected = 1
 # command to run Client
 def runClient(student ,ipadd):
-    #os.system('TestClient.py 2 100.26.31.241 audio2.wav')
+    #os.system('TestClient.py 2 18.220.239.193 audio2.wav')
     print(ipadd)
     stu = student.get()
     filename = 'audio' + stu + '.wav'
@@ -328,7 +328,7 @@ file_menu.add_command(label="Exit", command=mainwindow.quit)
 
 # Button to activate 'TestClient.py'
 #student = '2'
-ipadd = '172.31.20.157'
+ipadd = '18.220.239.193'
 #filename = 'audio2.wav'
 current_value = '0'
 student_label = Label(mainwindow, text ="Student number select")
