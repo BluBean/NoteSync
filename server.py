@@ -359,7 +359,7 @@ mainwindow.config(background='gray')
 def save_command():
     file_path = filedialog.asksaveasfilename()
     file_selected = 1"""
-"""def help():
+def help():
     tutorial = Tk()
     tutorial.title("Notesync User Guide")
     tutorial.iconbitmap("NoteSync_icon.ico")
@@ -371,15 +371,15 @@ def save_command():
     scroll_bar.pack(side=RIGHT, fill="y", expand=False)
     text_widget.pack(side=LEFT, fill="both", expand=True)
     text_widget.config(yscrollcommand=scroll_bar.set)
-    long_text = This is a multiline string.
+    long_text = """This is a multiline string.
     We can write this in multiple lines too!
     Hello from the Ass master Lance. This is the third line.
     This is the fourth line. Although the length of the text is longer than
     the width, we can use tkinter's scrollbar to solve this problem!
-    
+    """
     text_widget.insert(END, long_text)
     text_widget.configure(state='disabled')
-    gotit.pack(side=BOTTOM)"""
+    gotit.pack(side=BOTTOM)
 
 
 #create new menu options
