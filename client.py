@@ -31,7 +31,7 @@ def main(student, host, file):
     # student = sys.argv[1]
     # host = sys.argv[2]
     # file = sys.argv[3]
-    port = 60002  # Reserve a port for your service.
+    PORT = 60002  # Reserve a port for your service.
 
     ###########################################################
     #### Voice recorder MODULE
@@ -73,7 +73,7 @@ def main(student, host, file):
     # send the recorded file back to server
     with open(file, 'rb') as f:
         # Send student number, get offset
-        s.connect((host, port))
+        s.connect((host, PORT))
         s.send(str.encode(student))
         offset = s.recv(1024)  # get and store offset value for student (samples)
         #print(offset)
@@ -101,7 +101,7 @@ def main(student, host, file):
     connected = False
     while not connected:
         try:
-            s.connect((host,port))
+            s.connect((host,PORT))
             connected = True
         except Exception as e:
             pass #Do nothing, just try again
@@ -311,7 +311,7 @@ def save_command():
     file_selected = 1
 # command to run Client
 def runClient(student ,ipadd):
-    #os.system('TestClient.py 2 18.220.239.193 audio2.wav')
+    #os.system('client_test.py 2 18.220.239.193 audio2.wav')
     print(ipadd)
     stu = student.get()
     filename = 'audio' + stu + '.wav'
@@ -326,7 +326,7 @@ file_menu.add_command(label="Save Location", command=save_command)
 file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
-# Button to activate 'TestClient.py'
+# Button to activate 'client_test.py'
 #student = '2'
 ipadd = '18.220.239.193'
 #filename = 'audio2.wav'

@@ -7,7 +7,7 @@ s = socket.socket() # Create a socket object
 student = sys.argv[1]
 host = sys.argv[2]
 file = sys.argv[3]
-port = 60002 # Reserve a port for your service.
+PORT = 60002 # Reserve a port for your service.
 
 
 ###########################################################
@@ -52,7 +52,7 @@ if int(student) > 9 or int(student) < 0:
 # send the recorded file back to server
 with open (file,'rb') as f:
     # Send student number, get offset
-    s.connect((host, port))
+    s.connect((host, PORT))
     s.send(str.encode(student))
     offset = s.recv(1024)  # get and store offset value for student (samples)
     #print(offset)
@@ -79,7 +79,7 @@ s.close()
 connected = False
 while not connected:
     try:
-        s.connect((host,port))
+        s.connect((host, PORT))
         connected = True
     except Exception as e:
         pass #Do nothing, just try again

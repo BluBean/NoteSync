@@ -174,7 +174,7 @@ def serve(ids):
         pass
 
 
-#serve([1, 3, 4, 5])
+#serve([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 ###########################################################
 ####DSP MODULE
@@ -428,7 +428,7 @@ def DSPlaunch(bpm, beats, num_meas):
     dsp.syncfiles(bpm.get(), beats.get(), num_meas.get())
 
 def serverlaunch():
-    serve([1, 3, 4, 5])
+    serve([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 def start_stop(bpm, beats):
     global gnomestatus
