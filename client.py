@@ -43,18 +43,20 @@ def main(student, host, file):
     # --- output ---
     # write to .wav file
     ###########################################################
-    class voicerecorder:
-        def record(rec_samples, offset):
-            #print('checkpoint recorder')
-            fs = 48000  # Sample rate
-            duration = rec_samples  # Duration of recording (samples)
-            print('offset (samples): ', offset)
-            # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-            myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
-            sd.wait()  # Wait until recording is finished
-            # write('input1.wav', fs, myrecording)  # Save as WAV file
-            sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
-            print('voice recording saved')
+
+    def record(rec_samples, offset):
+        #print('checkpoint recorder')
+        metro_display.configure(bg='red')
+        fs = 48000  # Sample rate
+        duration = rec_samples  # Duration of recording (samples)
+        print('offset (samples): ', offset)
+        # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
+        myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
+        sd.wait()  # Wait until recording is finished
+        # write('input1.wav', fs, myrecording)  # Save as WAV file
+        sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
+        print('voice recording saved')
+        metro_display.configure(bg='blue')
 
     ### main client program ###
     if len(params) != 3:
@@ -82,7 +84,8 @@ def main(student, host, file):
         bpm, num_measures, tot_measures = metronome.split(b',')
         print('bpm: ', bpm, 'num_measures: ', num_measures, 'tot_measures: ', tot_measures)
         # record and save recording
-        voicerecorder.record(240000, offset)  # (<duration of recording>, <offset>) (samples)
+
+        record(240000, offset)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
         l = f.read(4096)
@@ -214,48 +217,78 @@ class dsp:
 # --- output ---
 # write to .wav file
 ###########################################################
-class voicerecorder:
+
     ## record(<samples in recording>, <samples in offset>)
-    def record(rec_samples, offset):
-        fs = 48000  # Sample rate
-        duration = rec_samples  # Duration of recording (samples)
-        print('offset (samples): ', offset)
-        # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-        myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
-        sd.wait()  # Wait until recording is finished
-        # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('test.wav', myrecording, fs, subtype='PCM_16')
-        print('voice recording saved')
+"""def record(rec_samples, offset):
+    metro_display.configure(bg='red')        
+    fs = 48000  # Sample rate
+    duration = rec_samples  # Duration of recording (samples)
+    print('offset (samples): ', offset)
+    # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
+    myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
+    sd.wait()  # Wait until recording is finished
+    # write('input1.wav', fs, myrecording)  # Save as WAV file
+    sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
+    print('voice recording saved')
+    metro_display.configure(bg='blue')"""
 
 #############################
 # Metronome module
 #############################
-class gnome:
+
+
   # Collect beats per minute and time signature from user
   #  bpm = int(input("Enter bpm value: "))
   #  tsig = int(input("Enter bpb value: "))
 
 
+
     # define metronome tool
-    def metronome(bpm, tsig):
-        global gnomestatus
-        sleep = 60.0 / bpm
-        counter = 0
-        while gnomestatus: # =True:
-            counter += 1
-            if counter % tsig:
-                print(f'tock')
-                playsound('tock.wav', False)
-            else:
-                print(f'TICK')
-                playsound('Tick.wav', False)
-                time.sleep(sleep)
-                mainwindow.after(1,start_stop(bpm_slider, time_sig_slider))
+def metronome(bpm, tsig):
+    global gnomestatus
+    global metrostatus
+    sleep = 60.0 / bpm
+    counter = 0
+    metrovalue = 0
+    while gnomestatus: # =True:
+        counter += 1
+        if counter % tsig:
+            print(f'tock')
+            playsound('tock.wav', False)
+            metrovalue=metrovalue+1
+            metrostatus.set(metrovalue)
+        else:
+            print(f'TICK')
+            playsound('Tick.wav', False)
+            metrovalue = tsig
+            metrostatus.set(metrovalue)
             time.sleep(sleep)
+            mainwindow.after(1,start_stop(bpm, time_sig))
+
+        time.sleep(sleep)
 
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
+
+def backgroundmetro(func, bpm, tsig):
+    global metrostatus
+    metrovalue = 0
+    sleep = 60.0 / bpm
+    counter = 0
+    counter += 1
+    if counter % tsig:
+        print(f'tock')
+        playsound('tock.wav', False)
+        metrovalue = metrovalue + 1
+        metrostatus.set(metrovalue)
+    else:
+        print(f'TICK')
+        playsound('Tick.wav', False)
+        metrovalue = tsig
+        metrostatus.set(metrovalue)
+        time.sleep(sleep)
+    background(func, bpm, tsig)
 
     # run metronome tool with given values
     #metronome(bpm, tsig)
@@ -334,7 +367,7 @@ def help():
 mainwindow = Tk()
 mainwindow.title("NoteSync")
 mainwindow.iconbitmap("NoteSync_icon.ico")
-mainwindow.geometry("300x100")
+mainwindow.geometry("300x200")
 main_menu = Menu(mainwindow)
 mainwindow.config(menu=main_menu)
 
@@ -351,6 +384,16 @@ def runClient(student ,ipadd):
     stu = student.get()
     filename = 'audio' + stu + '.wav'
     main(stu, ipadd, filename)
+
+def start_stop(bpm, beats):
+    global gnomestatus
+    if var.get()== 1:
+        gnomestatus = True
+        metronome(bpm, beats)
+    else:
+        gnomestatus = False
+        metronome(bpm, beats)
+
 #create new menu options
 
 file_menu = Menu(main_menu)
@@ -367,14 +410,29 @@ file_menu.add_command(label="Exit", command=mainwindow.quit)
 ipadd = '18.220.239.193'
 #filename = 'audio2.wav'
 current_value = '0'
-student_label = Label(mainwindow, text ="Student number select")
-student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True)
+student_label = Label(mainwindow, text ="Student number select", font=("32"))
+student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"))
 
-Clybutton = Button(mainwindow, text="Run Client",command= partial( background,runClient,student_spin ,ipadd))
+Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd))
+global metrostatus
+metrostatus = IntVar()
+
+metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg='blue', textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
+
+#metrostatus.set(0)
+
+#metro_display.configure(state='disabled')
+
+var = IntVar()
+bpm = 100
+time_sig = 8
+play = Checkbutton(mainwindow,variable=var, command=partial(backgroundmetro,start_stop, bpm,time_sig))
+#play.pack() #uncomment this line to test metronome
 
 student_label.pack()
 student_spin.pack()
 Clybutton.pack()
+metro_display.pack()
 
 
 
@@ -384,20 +442,12 @@ def recorderlaunch(bpm, beats, num_meas):
     rec_length = beats * (num_meas / bpm) #length in seconds
     samples = 48000 * 60 * rec_length  #length to record based on GUI (samples)
     offset_size = 48000 * 60 * (beats/bpm)  # samples per measure or known as the amount of samples in an offset
-    voicerecorder.record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
+    main.record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
 
 def DSPlaunch(bpm, beats, num_meas):
     #print('sync files button worked')
     dsp.syncfiles(bpm.get(), beats.get(), num_meas.get())
 
-def start_stop(bpm, beats):
-    global gnomestatus
-    if var.get()== 1:
-        gnomestatus = True
-        gnome.metronome(bpm.get(), beats.get())
-    else:
-        gnomestatus = False
-        gnome.metronome(bpm.get(), beats.get())
 
 
 mainwindow.mainloop()
