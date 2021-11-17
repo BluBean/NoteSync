@@ -100,9 +100,10 @@ def pull_values():
     Pull values from metronome.
     """
     bpm_value = bpm_slider.get()
+    totmeas_value = measures_slider.get()
 
 
-    return bpm_value, 0, 0
+    return bpm_value, 0, totmeas_value
 
 
 # store calculated offsets in dictionary
