@@ -392,13 +392,13 @@ def help():
             will receive all audio files ready to be synced.
         
             7.Press the "Sync Files" option after all recordings have been
-            received to initaite the syncing function.
+            received to initiate the syncing function.
         
             8.All set! Check your program files for the resulting synced up
             file named "output.wav"
         
             If you would like to utilize the metronome, you can at any time
-            by toggling the on and off botton. You can also record your own 
+            by toggling the on and off button. You can also record your own 
             audio by selecting the "Record Voice File."
         
             Thank you for choosing NoteSync!!!!!!!!!

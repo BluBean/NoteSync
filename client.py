@@ -300,23 +300,36 @@ def help():
     tutorial = Tk()
     tutorial.title("Notesync User Guide")
     tutorial.iconbitmap("NoteSync_icon.ico")
-    tutorial.geometry("700x500")
-    gotit = Button(tutorial, text="Thanks for the help!", command=tutorial.destroy)
+    tutorial.geometry("700x300")
+    #gotit = Button(tutorial, text="Thanks for the help!", command=tutorial.destroy)
     text_widget = Text(tutorial) #, height=400, width=40
-    scroll_bar = Scrollbar(tutorial)
+    #scroll_bar = Scrollbar(tutorial)
 
-    scroll_bar.pack(side=RIGHT, fill="y", expand=False)
+    #scroll_bar.pack(side=RIGHT, fill="y", expand=False)
     text_widget.pack(side=LEFT, fill="both", expand=True)
-    text_widget.config(yscrollcommand=scroll_bar.set)
-    long_text = """This is a multiline string.
-    We can write this in multiple lines too!
-    Hello from the Ass master Lance. This is the third line.
-    This is the fourth line. Although the length of the text is longer than
-    the width, we can use tkinter's scrollbar to solve this problem!
+    #text_widget.config(yscrollcommand=scroll_bar.set)
+    long_text = """Please follow these steps to successfully operate NoteSync:
+    
+            1.You will be provided a student number by the teacher.
+            You will need to enter it in the "Student Number Select"
+            section.
+            
+            2.Wait until the teacher instructs you to press "Run Client"
+            
+            3.You will see an indicator that shows you when you can sing.
+            the indicator will be red for the countdown and then it will 
+            turn blue when the program is recording and you wil hear a
+            metronome that is controlled by the teacher.
+            
+            4.All set! At the end of the recording, your audio file will 
+            be sent to the teacher so that it can be combined with the 
+            other singer's audio.
+            
+            Thank you for choosing NoteSync!!!!!!!!!
     """
     text_widget.insert(END, long_text)
     text_widget.configure(state='disabled')
-    gotit.pack(side=BOTTOM)
+    #gotit.pack(side=BOTTOM)
 
 mainwindow = Tk()
 mainwindow.title("NoteSync")
