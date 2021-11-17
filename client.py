@@ -296,6 +296,28 @@ def authors():
     authors.pack()
     authors_name.mainloop()
 
+def help():
+    tutorial = Tk()
+    tutorial.title("Notesync User Guide")
+    tutorial.iconbitmap("NoteSync_icon.ico")
+    tutorial.geometry("700x500")
+    gotit = Button(tutorial, text="Thanks for the help!", command=tutorial.destroy)
+    text_widget = Text(tutorial) #, height=400, width=40
+    scroll_bar = Scrollbar(tutorial)
+
+    scroll_bar.pack(side=RIGHT, fill="y", expand=False)
+    text_widget.pack(side=LEFT, fill="both", expand=True)
+    text_widget.config(yscrollcommand=scroll_bar.set)
+    long_text = """This is a multiline string.
+    We can write this in multiple lines too!
+    Hello from the Ass master Lance. This is the third line.
+    This is the fourth line. Although the length of the text is longer than
+    the width, we can use tkinter's scrollbar to solve this problem!
+    """
+    text_widget.insert(END, long_text)
+    text_widget.configure(state='disabled')
+    gotit.pack(side=BOTTOM)
+
 mainwindow = Tk()
 mainwindow.title("NoteSync")
 mainwindow.iconbitmap("NoteSync_icon.ico")
@@ -320,9 +342,10 @@ def runClient(student ,ipadd):
 
 file_menu = Menu(main_menu)
 # Dropdown menu at the top of GUI
-main_menu.add_cascade(label="File",menu=file_menu)
-file_menu.add_command(label="New...", command=new_command)
-file_menu.add_command(label="Save Location", command=save_command)
+main_menu.add_cascade(label="Options",menu=file_menu)
+#file_menu.add_command(label="New...", command=new_command)
+#file_menu.add_command(label="Save Location", command=save_command)
+file_menu.add_command(label="Help", command=help)
 file_menu.add_command(label="Authors", command=authors)
 file_menu.add_command(label="Exit", command=mainwindow.quit)
 
