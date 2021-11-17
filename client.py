@@ -72,17 +72,17 @@ def main(student, host, file):
 
     # send the recorded file back to server
     with open(file, 'rb') as f:
-       # print('checkpoint 3')
         # Send student number, get offset
         s.connect((host, port))
-        #print('checkpoint 4')
         s.send(str.encode(student))
-        #print('checkpoint 5')
         offset = s.recv(1024)  # get and store offset value for student (samples)
-        #print('checkpoint 6')
-        print(offset)
+        #print(offset)
+        metronome = s.recv(1024)  # get and store metronome values in a list (bpm, num_measures, tot_measures)
+        print(metronome)
+        bpm, num_measures, tot_measures = metronome.split(b',')
+        print('bpm: ', bpm, 'num_measures: ', num_measures, 'tot_measures: ', tot_measures)
         # record and save recording
-        voicerecorder.record(480000, offset)  # (<duration of recording>, <offset>) (samples)
+        voicerecorder.record(240000, offset)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
         l = f.read(4096)
