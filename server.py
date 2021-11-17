@@ -364,22 +364,48 @@ def help():
     tutorial.title("Notesync User Guide")
     tutorial.iconbitmap("NoteSync_icon.ico")
     tutorial.geometry("700x500")
-    gotit = Button(tutorial, text="Thanks for the help!", command=tutorial.destroy)
+    #gotit = Button(tutorial, text="Thanks for the help!", command=tutorial.destroy)
     text_widget = Text(tutorial) #, height=400, width=40
-    scroll_bar = Scrollbar(tutorial)
+    #scroll_bar = Scrollbar(tutorial)
 
-    scroll_bar.pack(side=RIGHT, fill="y", expand=False)
+    #scroll_bar.pack(side=RIGHT, fill="y", expand=False)
     text_widget.pack(side=LEFT, fill="both", expand=True)
-    text_widget.config(yscrollcommand=scroll_bar.set)
-    long_text = """This is a multiline string.
-    We can write this in multiple lines too!
-    Hello from the Ass master Lance. This is the third line.
-    This is the fourth line. Although the length of the text is longer than
-    the width, we can use tkinter's scrollbar to solve this problem!
+    #text_widget.config(yscrollcommand=scroll_bar.set)
+    long_text =\
+        """Please follow these steps to successfully operate NoteSync:
+        
+            1.Assign each student a number and provide this to them so 
+            the student(s) can input their number in the student version 
+            of the application.
+        
+            2.Select the Beats per minute that applies to your performance.
+        
+            3.Select the time signature that applies to your performance.
+        
+            4.Select the total number of measures in the performance.
+        
+            5.When ready, select the "Open Server" button.
+        
+            6.Immediately have each student select the "Run Client." 
+            This action will start a countdown till the voice recording 
+            starts for each student simultaneously. When finished, you 
+            will receive all audio files ready to be synced.
+        
+            7.Press the "Sync Files" option after all recordings have been
+            received to initaite the syncing function.
+        
+            8.All set! Check your program files for the resulting synced up
+            file named "output.wav"
+        
+            If you would like to utilize the metronome, you can at any time
+            by toggling the on and off botton. You can also record your own 
+            audio by selecting the "Record Voice File."
+        
+            Thank you for choosing NoteSync!!!!!!!!!
     """
     text_widget.insert(END, long_text)
     text_widget.configure(state='disabled')
-    gotit.pack(side=BOTTOM)
+    #gotit.pack(side=BOTTOM)
 
 
 #create new menu options
