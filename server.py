@@ -8,10 +8,105 @@ from typing import List
 
 
 # Globals
-PORT = 60002
-CONNECTIONS = {}
-CONN_LOCK = False
+T_PORT = 60003  # teacher port
+S_PORT = 60002  # student port
+T_CONNECTIONS = {}
+S_CONNECTIONS = {}
+T_CONN_LOCK = False
+S_CONN_LOCK = False
 
+
+###########################################################
+#### Teacher Connection
+#
+# receives teacher GUI data
+# sends finished wav file
+###########################################################
+
+# allow for threading teacher connection
+class TeacherThread(threading.Thread):
+    def __init__(self, taddr, tconn):
+        threading.Thread.__init__(self)
+        self.taddr = taddr
+        self.tconn = tconn
+        print(f"New connection {self.taddr}")
+
+
+    def run(self):
+        global T_CONNECTIONS
+        global T_CONN_LOCK
+        try:
+            t_download_seq(self.tconn, self.taddr)
+        except:
+            self.tconn.close()
+            print("Failed to download from teacher")
+            pass
+        # Remove from connections list
+        while T_CONN_LOCK:
+            pass
+        T_CONN_LOCK = True
+        T_CONNECTIONS.pop(self.taddr)
+        T_CONN_LOCK = False
+
+
+# listen until teacher connects to server
+def teacher_serve():
+    """
+    Start socket server
+    """
+    global T_CONNECTIONS
+    global T_CONN_LOCK
+
+    # create socket for teacher with timeout (sec)
+    s = create_socket(T_PORT, 10)
+
+    print('Server listening for teacher....')
+
+    while True:
+        s.listen(1)
+        # Catch connection
+        try:
+            conn, addr = s.accept()
+            print("Teacher connected.")
+        except socket.timeout:  # stop listening after timeout (sec)
+            break
+        tt = TeacherThread(addr, conn)
+
+        # make sure threads don't mess with each other
+        while T_CONN_LOCK:
+            pass
+        T_CONN_LOCK = True
+        T_CONNECTIONS[addr] = conn
+        T_CONN_LOCK = False
+        tt.start()  # start thread
+
+
+
+def t_download_seq(conn, addr):
+    global T_CONNECTIONS
+
+    # Receive data
+    data = int(conn.recv(1).decode())
+    print(data)
+
+    # Try to receive the teacher GUI data
+    #print("Receiving teacher GUI data...")
+    #data = conn.recv(4096)
+    #while data:
+    #    print(f"Receiving {len(data)} bytes...")
+    #    data = conn.recv(4096)
+
+    print("Done receiving teacher GUI data")
+    conn.send(b"We will be with you shortly...")
+    conn.close()
+
+
+###########################################################
+#### Student Connections
+#
+# receives: student GUI data; student recording
+# sends: student offset; metronome data
+###########################################################
 
 # allow for threading client connections
 class ServerThread(threading.Thread):
@@ -25,40 +120,112 @@ class ServerThread(threading.Thread):
 
 
     def run(self):
-        global CONNECTIONS
-        global CONN_LOCK
+        global S_CONNECTIONS
+        global S_CONN_LOCK
         try:
-            download_seq(self.cconn, self.caddr, self.offsets, self.metronome)
+            s_download_seq(self.cconn, self.caddr, self.offsets, self.metronome)
         except:
             self.cconn.close()
             print("Failed to download from student")
             pass
         # Remove from connections list
-        while CONN_LOCK:
+        while S_CONN_LOCK:
             pass
-        CONN_LOCK = True
-        CONNECTIONS.pop(self.caddr)
-        CONN_LOCK = False
+        S_CONN_LOCK = True
+        S_CONNECTIONS.pop(self.caddr)
+        S_CONN_LOCK = False
 
 
-def create_socket():
+def create_socket(port, t_sec):
     '''
     Create socket for listening.
     '''
     # Create TCP socket and set options
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.settimeout(5)
+    s.settimeout(t_sec)
 
     # Grab host addr
     host = socket.gethostname()
 
     # Bind to port
-    s.bind((host, PORT))
-    #s.bind(("127.0.0.1", PORT))  # local
+    #s.bind((host, port))  # ec2 server
+    s.bind(("127.0.0.1", port))  # local
 
     return s
 
+
+def s_download_seq(conn, addr, offsets, metronome):
+    global S_CONNECTIONS
+    # Decide the student number
+    sid = int(conn.recv(1).decode())
+
+    # Send back offset
+    conn.send(bytes(offsets[sid], 'utf-8'))
+    # Send metronome
+    conn.send(bytes(metronome, 'utf-8'))
+
+    # Try to receive the WAV
+    print("Receiving student wav file...")
+
+    # write to corresponding student audio file
+    with open(f"student_{sid}.wav", "wb") as f:
+        data = conn.recv(4096)
+        while data:
+            print(f"Receiving {len(data)} bytes...")
+            f.write(data)
+            data = conn.recv(4096)
+
+    print("Done receiving the bacon")
+    conn.send(b"Thank you for connecting. Please come again!")
+    conn.close()
+
+
+def serve(ids):
+    """
+    Start socket server
+    """
+    global S_CONNECTIONS
+    global S_CONN_LOCK
+
+    # create socket for student
+    s = create_socket(S_PORT, 5)
+
+    print('Server listening....')
+
+    # store offsets from offset calculator to send to client
+    offsets = get_offsets(ids)
+    # store metronome values from GUI to send to client
+    metronome = get_metronome()
+
+    while True:
+        s.listen(1)
+        # Catch connection
+        try:
+            conn, addr = s.accept()
+        except socket.timeout:  # stop listening after timeout (sec)
+            break
+        st = ServerThread(addr, conn, offsets, metronome)
+        #st = ServerThread(addr, conn, offsets)
+
+        # make sure threads don't mess with each other
+        while S_CONN_LOCK:
+            pass
+        S_CONN_LOCK = True
+        S_CONNECTIONS[addr] = conn
+        S_CONN_LOCK = False
+        st.start()  # start thread
+
+    # keep processing until no connections remain
+    while len(S_CONNECTIONS) > 0:
+        pass
+
+
+
+###########################################################
+#### GUI and calculations
+#
+###########################################################
 
 # use values retrieved from server GUI to calculate offset
 def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
@@ -94,69 +261,7 @@ def get_metronome() -> str:
     bpm, num_measures, tot_measures = pull_values()
     return str(bpm) + "," + str(num_measures) + "," + str(tot_measures)
 
-def download_seq(conn, addr, offsets, metronome):
-    global CONNECTIONS
-    # Decide the student number
-    sid = int(conn.recv(1).decode())
-
-    # Send back offset
-    conn.send(bytes(offsets[sid], 'utf-8'))
-    # Send metronome
-    conn.send(bytes(metronome, 'utf-8'))
-
-    # Try to receive the WAV
-    print("Receiving student wav file...")
-
-    # write to corresponding student audio file
-    with open(f"student_{sid}.wav", "wb") as f:
-        data = conn.recv(4096)
-        while data:
-            print(f"Receiving {len(data)} bytes...")
-            f.write(data)
-            data = conn.recv(4096)
-
-    print("Done receiving the bacon")
-    conn.send(b"Thank you for connecting. Please come again!")
-    conn.close()
 
 
-def serve(ids):
-    """
-    Start socket server
-    """
-    global CONNECTIONS
-    global CONN_LOCK
-
-    s = create_socket()
-
-    print('Server listening....')
-
-    # store offsets from offset calculator to send to client
-    offsets = get_offsets(ids)
-    # store metronome values from GUI to send to client
-    metronome = get_metronome()
-
-    while True:
-        s.listen(1)
-        # Catch connection
-        try:
-            conn, addr = s.accept()
-        except socket.timeout:  # stop listening after timeout (sec)
-            break
-        st = ServerThread(addr, conn, offsets, metronome)
-        #st = ServerThread(addr, conn, offsets)
-
-        # make sure threads don't mess with each other
-        while CONN_LOCK:
-            pass
-        CONN_LOCK = True
-        CONNECTIONS[addr] = conn
-        CONN_LOCK = False
-        st.start()  # start thread
-
-    # keep processing until no connections remain
-    while len(CONNECTIONS) > 0:
-        pass
-
-
-serve([1, 3, 4, 5])
+teacher_serve()
+#serve([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
