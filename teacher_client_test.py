@@ -1,52 +1,112 @@
 #!/usr/bin/env python3
 import os, socket, sys
+from typing import List
+import json
 import sounddevice as sd
 import soundfile as sf
+
+
+# Globals
+s = socket.socket()      # Create a socket object
+#HOST = '18.220.239.193'  # ec2 server
+HOST = '127.0.0.1'       # local host
+T_PORT = 60003           # Reserve a port for your service.
+
 
 ###########################################################
 #### Teacher Client Connection
 #
 ###########################################################
 
-s = socket.socket()      # Create a socket object
-#HOST = '18.220.239.193'  # ec2 server
-HOST = '127.0.0.1'       # local host
-T_PORT = 60003           # Reserve a port for your service.
-
-### main client program ###
-#if len(sys.argv) != 4:
-#    print("Syntax: python3 client_test.py <student number> <host> <wav file>")
-#    sys.exit(0)
-
-# add check to verify file exists or quit
-#if not os.path.exists(file):
-#    print(file + " does not exist. Exiting.")
-#    sys.exit(0)
-
-#if int(student) > 9 or int(student) < 0:
-#    print("Student number is invalid. Valid student numbers are 0-9.")
-#    sys.exit(0)
-
-
-# send GUI data from metronome to server
-def send_GUI_data():
-    student = '1'
-    s.send(str.encode(student))
-    print("Sent student info")
-    return
-
-def close_conn():
-    print("Done Sending")
-    s.shutdown(socket.SHUT_WR)
-    print(s.recv(1024))
-    s.close()
 
 # connect to server
 def conn_server():
     s.connect((HOST, T_PORT))
     print("Connected.")
 
-conn_server()
-send_GUI_data()
-close_conn()
 
+# close connection to server
+def close_conn():
+    print("Done Sending")
+    s.shutdown(socket.SHUT_WR)
+    print(s.recv(1024))
+    print("Goodbye.")
+    s.close()
+
+
+# send teacher GUI data to server
+def send_GUI_data(ids):
+
+    # teacher GUI data
+    metronome = pull_metronome()
+    offsets = pull_offsets(ids)
+
+    # Send metronome
+    s.send(bytes(metronome, 'utf-8'))
+    print("Sent metronome info")
+
+    # Send offsets dictionary
+    s.send(json.dumps(offsets, indent=2).encode('utf-8') + b"\n")
+    print("Sent student offset info")
+
+    return
+
+
+###########################################################
+#### Pull data from teacher client GUI
+#    to send to server
+#
+###########################################################
+
+
+# pull student offset values; store in a dictionary
+def pull_offsets(ids: List) -> dict:
+    store = {}
+    """
+    Pull values from offset table.
+    Store in dictionary.
+
+    ids : student IDs
+
+    return as a dictionary to send to server
+    """
+    for val in ids:
+        store[val] = "1"
+    return store
+    #return '1'
+
+
+# pull metronome values; store in a string
+def pull_metronome() -> str:
+    """
+    Pull values from metronome.
+
+    bpm : bpm
+    t_sig : time signature numerator
+    tot_measures: total number of measures
+
+    return as a string to send to server
+    """
+
+    # test values
+    bpm = 123
+    t_sig = 456
+    tot_measures = 789
+    return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
+
+
+### main program ###
+def teacher_main():
+    # available student IDs
+    ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    # connect and send data to server
+    conn_server()
+    send_GUI_data(ids)
+
+    # close connection with server
+    close_conn()
+
+
+# run teacher client file
+teacher_main()

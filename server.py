@@ -5,6 +5,7 @@ import socket
 import threading
 from _thread import *
 from typing import List
+import json
 
 
 # Globals
@@ -22,6 +23,7 @@ S_CONN_LOCK = False
 # receives teacher GUI data
 # sends finished wav file
 ###########################################################
+
 
 # allow for threading teacher connection
 class TeacherThread(threading.Thread):
@@ -81,20 +83,16 @@ def teacher_serve():
         tt.start()  # start thread
 
 
-
 def t_download_seq(conn, addr):
     global T_CONNECTIONS
 
-    # Receive data
-    data = int(conn.recv(1).decode())
-    print(data)
+    # Try to receive metronome data (bpm, num_measures, tot_measures)
+    metronome = conn.recv(11)
+    print("metronome: ", metronome)
 
-    # Try to receive the teacher GUI data
-    #print("Receiving teacher GUI data...")
-    #data = conn.recv(4096)
-    #while data:
-    #    print(f"Receiving {len(data)} bytes...")
-    #    data = conn.recv(4096)
+    # Try to receive and deserialize offsets dictionary
+    offsets = json.loads(conn.recv(1024))
+    print("offsets: ", offsets)
 
     print("Done receiving teacher GUI data")
     conn.send(b"We will be with you shortly...")
@@ -107,6 +105,7 @@ def t_download_seq(conn, addr):
 # receives: student GUI data; student recording
 # sends: student offset; metronome data
 ###########################################################
+
 
 # allow for threading client connections
 class ServerThread(threading.Thread):
@@ -155,32 +154,6 @@ def create_socket(port, t_sec):
     return s
 
 
-def s_download_seq(conn, addr, offsets, metronome):
-    global S_CONNECTIONS
-    # Decide the student number
-    sid = int(conn.recv(1).decode())
-
-    # Send back offset
-    conn.send(bytes(offsets[sid], 'utf-8'))
-    # Send metronome
-    conn.send(bytes(metronome, 'utf-8'))
-
-    # Try to receive the WAV
-    print("Receiving student wav file...")
-
-    # write to corresponding student audio file
-    with open(f"student_{sid}.wav", "wb") as f:
-        data = conn.recv(4096)
-        while data:
-            print(f"Receiving {len(data)} bytes...")
-            f.write(data)
-            data = conn.recv(4096)
-
-    print("Done receiving the bacon")
-    conn.send(b"Thank you for connecting. Please come again!")
-    conn.close()
-
-
 def serve(ids):
     """
     Start socket server
@@ -221,11 +194,37 @@ def serve(ids):
         pass
 
 
+def s_download_seq(conn, addr, offsets, metronome):
+    global S_CONNECTIONS
+    # Decide the student number
+    sid = int(conn.recv(1).decode())
+
+    # Send metronome
+    conn.send(bytes(metronome, 'utf-8'))
+    # Send back offset
+    conn.send(bytes(offsets[sid], 'utf-8'))
+
+    # Try to receive the WAV
+    print("Receiving student wav file...")
+
+    # write to corresponding student audio file
+    with open(f"student_{sid}.wav", "wb") as f:
+        data = conn.recv(4096)
+        while data:
+            print(f"Receiving {len(data)} bytes...")
+            f.write(data)
+            data = conn.recv(4096)
+
+    print("Done receiving.")
+    conn.send(b"Thank you for connecting. Please come again!")
+    conn.close()
+
 
 ###########################################################
 #### GUI and calculations
 #
 ###########################################################
+
 
 # use values retrieved from server GUI to calculate offset
 def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
@@ -234,7 +233,7 @@ def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
     num_measures: number of measures for offset to be
     tot_measures: total number of measures
 
-    returns: number of samples gets returned
+    returns: number of samples gets returned as a string
     '''
     value = "0"
     return value
@@ -244,6 +243,10 @@ def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
 def pull_values():
     """
     Pull values from metronome.
+
+    bpm : bpm
+    time_sig : time signature numerator
+    tot_measures: total number of measures
     """
     return 0, 0, 0
 
@@ -256,12 +259,13 @@ def get_offsets(ids: List) -> dict:
         store[val] = wav_file_calculation(bpm, num_measures, tot_measures)
     return store
 
+
 # store metronome values in string
 def get_metronome() -> str:
     bpm, num_measures, tot_measures = pull_values()
     return str(bpm) + "," + str(num_measures) + "," + str(tot_measures)
 
 
-
+### main program ###
 teacher_serve()
 #serve([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])

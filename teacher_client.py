@@ -27,29 +27,17 @@ from sys import argv
 import time
 
 
-###########################################################
-#### Teacher Client Connection
-#
-###########################################################
-
+# Globals
 s = socket.socket()      # Create a socket object
 #HOST = '18.220.239.193'  # ec2 server
 HOST = '127.0.0.1'       # local host
 T_PORT = 60003           # Reserve a port for your service.
 
-### main client program ###
-#if len(sys.argv) != 4:
-#    print("Syntax: python3 client_test.py <student number> <host> <wav file>")
-#    sys.exit(0)
 
-# add check to verify file exists or quit
-#if not os.path.exists(file):
-#    print(file + " does not exist. Exiting.")
-#    sys.exit(0)
-
-#if int(student) > 9 or int(student) < 0:
-#    print("Student number is invalid. Valid student numbers are 0-9.")
-#    sys.exit(0)
+###########################################################
+#### Teacher Client Connection
+#
+###########################################################
 
 
 # send GUI data from metronome to server
@@ -70,9 +58,9 @@ def conn_server():
     s.connect((HOST, T_PORT))
     print("Connected.")
 
-conn_server()
-send_GUI_data()
-close_conn()
+#conn_server()
+#send_GUI_data()
+#close_conn()
 
 
 ###########################################################
