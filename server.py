@@ -24,7 +24,6 @@ S_CONN_LOCK = False
 # sends finished wav file
 ###########################################################
 
-
 # allow for threading teacher connection
 class TeacherThread(threading.Thread):
     def __init__(self, taddr, tconn):
@@ -105,7 +104,6 @@ def t_download_seq(conn, addr):
 # receives: student GUI data; student recording
 # sends: student offset; metronome data
 ###########################################################
-
 
 # allow for threading client connections
 class ServerThread(threading.Thread):
@@ -224,7 +222,6 @@ def s_download_seq(conn, addr, offsets, metronome):
 #### GUI and calculations
 #
 ###########################################################
-
 
 # use values retrieved from server GUI to calculate offset
 def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:

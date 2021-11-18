@@ -39,7 +39,6 @@ T_PORT = 60003           # Reserve a port for your service.
 #
 ###########################################################
 
-
 # send GUI data from metronome to server
 def send_GUI_data():
     student = '1'

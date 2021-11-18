@@ -20,7 +20,6 @@ S_PORT = 60002 # Reserve a port for your service.
 # python3 student_client_test.py 1 127.0.0.1 audio1.wav  # local host
 ###########################################################
 
-
 # check for user input errors
 def verify_inputs():
     if len(sys.argv) != 4:
@@ -98,6 +97,7 @@ while not connected:
 # --- output ---
 # write to .wav file
 ###########################################################
+
 class voicerecorder:
     def record(rec_samples, offset):
         fs = 48000  # Sample rate

@@ -18,7 +18,6 @@ T_PORT = 60003           # Reserve a port for your service.
 #
 ###########################################################
 
-
 # connect to server
 def conn_server():
     s.connect((HOST, T_PORT))
@@ -58,7 +57,6 @@ def send_GUI_data(ids):
 #
 ###########################################################
 
-
 # pull student offset values; store in a dictionary
 def pull_offsets(ids: List) -> dict:
     store = {}
@@ -80,6 +78,7 @@ def pull_offsets(ids: List) -> dict:
 def pull_metronome() -> str:
     """
     Pull values from metronome.
+    Values must be 3 digits each. ex: t_sig = 004
 
     bpm : bpm
     t_sig : time signature numerator
