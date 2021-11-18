@@ -28,7 +28,6 @@ def conn_server():
 def close_conn():
     print("Done Sending")
     s.shutdown(socket.SHUT_WR)
-    print(s.recv(1024))
     print("Goodbye.")
     s.close()
 
@@ -48,8 +47,32 @@ def send_GUI_data(ids):
     s.send(json.dumps(offsets, indent=2).encode('utf-8') + b"\n")
     print("Sent student offset info")
 
+    print(s.recv(1024))
+
     return
 
+# receive final mix as WAV
+def receive_mix():
+
+    # generate empty wav file
+    f = open('NoteSync.wav', "w+")
+    f.close()
+
+    # Try to receive the WAV
+    print("Receiving mixed wav file...")
+
+    # write to corresponding student audio file
+    with open(f"NoteSync.wav", "wb") as f:
+        data = s.recv(4096)
+        while data:
+            print(f"Receiving {len(data)} bytes...")
+            f.write(data)
+            data = s.recv(4096)
+
+    print("Done receiving.")
+    s.send(b"sick mixtape G")
+    print("close conn at receive_mix.")
+    s.close()
 
 ###########################################################
 #### Pull data from teacher client GUI
@@ -78,7 +101,7 @@ def pull_offsets(ids: List) -> dict:
 def pull_metronome() -> str:
     """
     Pull values from metronome.
-    Values must be 3 digits each. ex: t_sig = 004
+    Values must be int with length == 3. ex: t_sig = 004
 
     bpm : bpm
     t_sig : time signature numerator
@@ -103,8 +126,23 @@ def teacher_main():
     conn_server()
     send_GUI_data(ids)
 
+    # wait to receive final wav file
+    while True:
+        notify = s.recv(4)  # waits for notification from server
+        print("received notification: ", notify)
+        if notify == b'done':
+            print("break statement")
+            break
+        elif notify != b'done':
+            s.close()
+            print("Failed to receive notification")
+            exit()
+
+    # try to receive wav
+    receive_mix()
+
     # close connection with server
-    close_conn()
+    #close_conn()
 
 
 # run teacher client file

@@ -6,6 +6,7 @@ import threading
 from _thread import *
 from typing import List
 import json
+import time
 
 
 # Globals
@@ -57,7 +58,7 @@ def main():
     """
     Start socket server
     """
-    global T_CONNECTIONS
+    global T_CONNECTIONS, S_CONNECTIONS
     global T_CONN_LOCK
 
     # create socket for teacher with timeout (sec)
@@ -89,6 +90,7 @@ def main():
 
         # start student threads
         serve()
+        print("finished student serve.")
 
 
         #####################################
@@ -99,6 +101,15 @@ def main():
         #   send file back to teacher  #
         ################################
 
+        # wait for first student to connect
+        time.sleep(5)
+        # wait until no student connections remain
+        while len(S_CONNECTIONS) > 0:
+            pass
+        print("sending file to teacher")
+        t_download_seq(conn, addr)
+
+
         ################################
         #   close teacher connections  #
         ################################
@@ -108,6 +119,7 @@ def main():
         ################################
 
 
+# receive metronome and offset data from teacher client
 def t_upload_seq(conn, addr):
     global T_CONNECTIONS, T_METRONOME, T_OFFSETS
 
@@ -123,6 +135,37 @@ def t_upload_seq(conn, addr):
 
     print("Done receiving teacher GUI data")
     conn.send(b"We will be with you shortly...")
+    #conn.close()
+
+
+# send final mixed wav file to teacher
+def t_download_seq(conn, addr):
+    global T_CONNECTIONS, T_METRONOME, T_OFFSETS
+
+    # notify teacher client that final wav is ready
+    notify = 'done'
+    conn.send(bytes(notify, 'utf-8'))
+    print("notify: ", notify)
+
+    ### test ###
+    # generate empty wav file
+    #f = open('final_mix.wav', "w+")
+    #f.close()
+
+    # send the recorded file back to server
+    with open('audio1.wav', 'rb') as f:
+        print("Sending...")
+        l = f.read(4096)
+        while (l):
+            print("Sending...")
+            conn.send(l)
+            l = f.read(4096)
+
+    print("Done Sending")
+    conn.shutdown(socket.SHUT_WR)
+    print(conn.recv(1024))
+    print("t_download_seq complete.")
+
     conn.close()
 
 
