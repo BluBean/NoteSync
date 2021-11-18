@@ -80,7 +80,6 @@ def receive_mix():
 #
 ###########################################################
 
-
 # pull metronome values; store in a string
 def pull_metronome() -> str:
     """
@@ -93,11 +92,29 @@ def pull_metronome() -> str:
 
     return as a string to send to server
     """
-
     # test values
-    bpm = 123
-    t_sig = 456
-    tot_measures = 789
+    """    bpm = mainwindow.bpm_slider.get()
+    t_sig = mainwindow.time_sig_slider.get()
+    tot_measures = mainwindow.measures_slider.get()"""
+    bpm = 3
+    t_sig = 6
+    tot_measures = 9
+    # bit manipulation
+    if bpm < 10:
+        bpm = "00"+str(bpm)
+    elif bpm < 100:
+        bpm = "0"+str(bpm)
+    if t_sig <10:
+        t_sig = "00" + str(t_sig)
+    else:
+        t_sig= "0"+str(t_sig)
+    if tot_measures <10:
+        tot_measures = "00" + str(tot_measures)
+    else:
+        tot_measures= "0"+str(tot_measures)
+
+    print(str(bpm) + "," + str(t_sig) + "," + str(tot_measures))
+
     return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
 
 
