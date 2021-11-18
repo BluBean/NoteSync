@@ -129,7 +129,9 @@ def pull_offsets(ids: List) -> dict:
 
     return as a dictionary to send to server
     """
+
     for val in ids:
+        #store={"val":mainwindow.s[val].get()}
         store[val] = "1"
     return store
     #return '1'
