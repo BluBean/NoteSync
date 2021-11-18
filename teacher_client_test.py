@@ -80,22 +80,6 @@ def receive_mix():
 #
 ###########################################################
 
-# pull student offset values; store in a dictionary
-def pull_offsets(ids: List) -> dict:
-    store = {}
-    """
-    Pull values from offset table.
-    Store in dictionary.
-
-    ids : student IDs
-
-    return as a dictionary to send to server
-    """
-    for val in ids:
-        store[val] = "1"
-    return store
-    #return '1'
-
 
 # pull metronome values; store in a string
 def pull_metronome() -> str:
@@ -115,6 +99,23 @@ def pull_metronome() -> str:
     t_sig = 456
     tot_measures = 789
     return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
+
+
+# pull student offset values; store in a dictionary
+def pull_offsets(ids: List) -> dict:
+    store = {}
+    """
+    Pull values from offset table.
+    Store offset as string in dictionary (samples or measures)
+
+    ids : student IDs
+
+    return as a dictionary to send to server
+    """
+    for val in ids:
+        store[val] = "1"
+    return store
+    #return '1'
 
 
 ### main program ###

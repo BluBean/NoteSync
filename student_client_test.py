@@ -54,8 +54,8 @@ def stu_main():
         metronome = s.recv(11)
         print(metronome)
 
-        bpm, num_measures, tot_measures = metronome.split(b',')
-        print('bpm: ', bpm, 'num_measures: ', num_measures, 'tot_measures: ', tot_measures)
+        bpm, t_sig, tot_measures = metronome.split(b',')
+        print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
 
         # get and store offset value for student (samples)
         offset = s.recv(1024)

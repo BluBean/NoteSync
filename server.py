@@ -97,10 +97,9 @@ def main():
         #   mix audio files from students   #
         #####################################
 
-        ################################
-        #   send file back to teacher  #
-        ################################
 
+
+        # send file back to teacher
         # wait for first student to connect
         time.sleep(5)
         # wait until no student connections remain
