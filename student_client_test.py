@@ -47,9 +47,11 @@ def stu_main():
         # Send student number, get offset
         s.connect((host, S_PORT))
         s.send(str.encode(student))
+        print("Sending student ID", student)
+        print(str.encode(student))
 
         # get and store metronome values in a list (bpm, num_measures, tot_measures)
-        metronome = s.recv(1024)
+        metronome = s.recv(11)
         print(metronome)
 
         bpm, num_measures, tot_measures = metronome.split(b',')

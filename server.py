@@ -15,6 +15,8 @@ T_CONNECTIONS = {}
 S_CONNECTIONS = {}
 T_CONN_LOCK = False
 S_CONN_LOCK = False
+T_METRONOME = b''  # clear param before closing program
+T_OFFSETS = {}     # clear param before closing program
 
 
 ###########################################################
@@ -37,7 +39,7 @@ class TeacherThread(threading.Thread):
         global T_CONNECTIONS
         global T_CONN_LOCK
         try:
-            t_download_seq(self.tconn, self.taddr)
+            t_upload_seq(self.tconn, self.taddr)
         except:
             self.tconn.close()
             print("Failed to download from teacher")
@@ -50,8 +52,8 @@ class TeacherThread(threading.Thread):
         T_CONN_LOCK = False
 
 
-# listen until teacher connects to server
-def teacher_serve():
+# main program
+def main():
     """
     Start socket server
     """
@@ -81,21 +83,57 @@ def teacher_serve():
         T_CONN_LOCK = False
         tt.start()  # start thread
 
+        # wait to receive global parameter updates from teacher
+        while (T_METRONOME == b'' and T_OFFSETS == {}):
+            pass
 
-def t_download_seq(conn, addr):
-    global T_CONNECTIONS
+        # start student threads
+        serve()
+
+
+        #####################################
+        #   mix audio files from students   #
+        #####################################
+
+        ################################
+        #   send file back to teacher  #
+        ################################
+
+        ################################
+        #   close teacher connections  #
+        ################################
+
+        ################################
+        #     reset global variables   #
+        ################################
+
+
+def t_upload_seq(conn, addr):
+    global T_CONNECTIONS, T_METRONOME, T_OFFSETS
 
     # Try to receive metronome data (bpm, num_measures, tot_measures)
     metronome = conn.recv(11)
-    print("metronome: ", metronome)
+    #print("metronome: ", metronome)
+    T_METRONOME = metronome.decode('utf-8').split(',')
 
     # Try to receive and deserialize offsets dictionary
     offsets = json.loads(conn.recv(1024))
-    print("offsets: ", offsets)
+    #print("offsets: ", offsets)
+    T_OFFSETS = offsets
 
     print("Done receiving teacher GUI data")
     conn.send(b"We will be with you shortly...")
     conn.close()
+
+
+def decode_metronome(metronome) -> int:
+    # split into variables
+    bpm, t_sig, tot_measures = metronome
+    bpm = int(bpm)
+    t_sig = int(t_sig)
+    tot_measures = int(tot_measures)
+    #print('bpm:', bpm, ' t_sig:', t_sig, ' tot_measures:', tot_measures)
+    return bpm, t_sig, tot_measures
 
 
 ###########################################################
@@ -107,12 +145,12 @@ def t_download_seq(conn, addr):
 
 # allow for threading client connections
 class ServerThread(threading.Thread):
-    def __init__(self, caddr, cconn, offsets, metronome):
+    def __init__(self, caddr, cconn, metronome, offsets):
         threading.Thread.__init__(self)
         self.caddr = caddr
         self.cconn = cconn
-        self.offsets = offsets
         self.metronome = metronome
+        self.offsets = offsets
         print(f"New connection {self.caddr}")
 
 
@@ -120,7 +158,7 @@ class ServerThread(threading.Thread):
         global S_CONNECTIONS
         global S_CONN_LOCK
         try:
-            s_download_seq(self.cconn, self.caddr, self.offsets, self.metronome)
+            s_download_seq(self.cconn, self.caddr, self.metronome, self.offsets)
         except:
             self.cconn.close()
             print("Failed to download from student")
@@ -152,22 +190,26 @@ def create_socket(port, t_sec):
     return s
 
 
-def serve(ids):
+def serve():
     """
     Start socket server
     """
-    global S_CONNECTIONS
-    global S_CONN_LOCK
+    global S_CONNECTIONS, S_CONN_LOCK
+    global T_METRONOME, T_OFFSETS
 
     # create socket for student
     s = create_socket(S_PORT, 5)
 
     print('Server listening....')
 
-    # store offsets from offset calculator to send to client
-    offsets = get_offsets(ids)
-    # store metronome values from GUI to send to client
-    metronome = get_metronome()
+    # store metronome string to send to client
+    metronome = encode_metronome(T_METRONOME)
+    #("metronome_serve: ", metronome)
+
+    # store offsets in dictionary to send to client
+    offsets = T_OFFSETS
+    offsets = {int(k): str(v) for k, v in offsets.items()}
+    #print("offsets_serve: ", offsets)
 
     while True:
         s.listen(1)
@@ -176,8 +218,7 @@ def serve(ids):
             conn, addr = s.accept()
         except socket.timeout:  # stop listening after timeout (sec)
             break
-        st = ServerThread(addr, conn, offsets, metronome)
-        #st = ServerThread(addr, conn, offsets)
+        st = ServerThread(addr, conn, metronome, offsets)
 
         # make sure threads don't mess with each other
         while S_CONN_LOCK:
@@ -192,15 +233,17 @@ def serve(ids):
         pass
 
 
-def s_download_seq(conn, addr, offsets, metronome):
+def s_download_seq(conn, addr, metronome, offsets):
     global S_CONNECTIONS
     # Decide the student number
     sid = int(conn.recv(1).decode())
 
     # Send metronome
     conn.send(bytes(metronome, 'utf-8'))
+    #print('metronome download', bytes(metronome, 'utf-8'))
     # Send back offset
     conn.send(bytes(offsets[sid], 'utf-8'))
+    #print('offsets download', bytes(offsets[sid], 'utf-8'))
 
     # Try to receive the WAV
     print("Receiving student wav file...")
@@ -218,8 +261,14 @@ def s_download_seq(conn, addr, offsets, metronome):
     conn.close()
 
 
+# store metronome values in string
+def encode_metronome(metronome) -> str:
+    bpm, t_sig, tot_measures = metronome
+    return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
+
+
 ###########################################################
-#### GUI and calculations
+#### Calculations
 #
 ###########################################################
 
@@ -232,37 +281,9 @@ def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
 
     returns: number of samples gets returned as a string
     '''
-    value = "0"
+    value = "1"
     return value
 
 
-# retrieve metronome values from GUI for use in calculations
-def pull_values():
-    """
-    Pull values from metronome.
-
-    bpm : bpm
-    time_sig : time signature numerator
-    tot_measures: total number of measures
-    """
-    return 0, 0, 0
-
-
-# store calculated offsets in dictionary
-def get_offsets(ids: List) -> dict:
-    store = {}
-    bpm, num_measures, tot_measures = pull_values()
-    for val in ids:
-        store[val] = wav_file_calculation(bpm, num_measures, tot_measures)
-    return store
-
-
-# store metronome values in string
-def get_metronome() -> str:
-    bpm, num_measures, tot_measures = pull_values()
-    return str(bpm) + "," + str(num_measures) + "," + str(tot_measures)
-
-
 ### main program ###
-teacher_serve()
-#serve([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+main()
