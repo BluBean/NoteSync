@@ -24,6 +24,8 @@ from sys import argv
 import time
 
 
+
+
 ##########################################################
 #### Student Client Connection
 #
@@ -51,7 +53,7 @@ def main(student, host, file):
 
     def record(rec_samples, offset):
         #print('checkpoint recorder')
-        metro_display.configure(bg='red')
+        mainwindow.metro_display.configure(bg='red')
         fs = 48000  # Sample rate
         duration = rec_samples  # Duration of recording (samples)
         print('offset (samples): ', offset)
@@ -61,7 +63,7 @@ def main(student, host, file):
         # write('input1.wav', fs, myrecording)  # Save as WAV file
         sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
         print('voice recording saved')
-        metro_display.configure(bg='blue')
+        mainwindow.metro_display.configure(bg='blue')
 
     ### main client program ###
     if len(params) != 3:
@@ -304,22 +306,22 @@ def backgroundmetro(func, bpm, tsig):
 
 
 
+def initialpopup():
+    Initialpopup = Tk()
+    Initialpopup.title("Welcome to NoteSync")
+    Initialpopup.iconbitmap("NoteSync_icon.ico")
 
-Initialpopup = Tk()
-Initialpopup.title("Welcome to NoteSync")
-Initialpopup.iconbitmap("NoteSync_icon.ico")
-
-logo = PhotoImage(file="NoteSync_logo.png")
-label1 = Label(Initialpopup, image= logo)
-label1.pack()
-label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning")
-label2.pack()
-#button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
-button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy )
-button1.pack()
-#button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
-#button2.pack()
-Initialpopup.mainloop()
+    logo = PhotoImage(file="NoteSync_logo.png")
+    label1 = Label(Initialpopup, image= logo)
+    label1.pack()
+    label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning")
+    label2.pack()
+    #button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
+    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy )
+    button1.pack()
+    #button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
+    #button2.pack()
+    Initialpopup.mainloop()
 
 def authors():
     authors_name = Tk()
@@ -369,13 +371,6 @@ def help():
     text_widget.configure(state='disabled')
     #gotit.pack(side=BOTTOM)
 
-mainwindow = Tk()
-mainwindow.title("NoteSync")
-mainwindow.iconbitmap("NoteSync_icon.ico")
-mainwindow.geometry("300x200")
-main_menu = Menu(mainwindow)
-mainwindow.config(menu=main_menu)
-
 #menu commands
 def new_command():
     file_path0 = filedialog.askopenfilename()
@@ -392,55 +387,12 @@ def runClient(student ,ipadd):
 
 def start_stop(bpm, beats):
     global gnomestatus
-    if var.get()== 1:
+    if mainwindow.var.get()== 1:
         gnomestatus = True
         metronome(bpm, beats)
     else:
         gnomestatus = False
         metronome(bpm, beats)
-
-#create new menu options
-
-file_menu = Menu(main_menu)
-# Dropdown menu at the top of GUI
-main_menu.add_cascade(label="Options",menu=file_menu)
-#file_menu.add_command(label="New...", command=new_command)
-#file_menu.add_command(label="Save Location", command=save_command)
-file_menu.add_command(label="Help", command=help)
-file_menu.add_command(label="Authors", command=authors)
-file_menu.add_command(label="Exit", command=mainwindow.quit)
-
-# Button to activate 'TestClient.py'
-#student = '2'
-ipadd = '18.220.239.193'
-#filename = 'audio2.wav'
-current_value = '0'
-student_label = Label(mainwindow, text ="Student number select", font=("32"))
-student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"))
-
-Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd))
-global metrostatus
-metrostatus = IntVar()
-
-metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg='blue', textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
-
-#metrostatus.set(0)
-
-#metro_display.configure(state='disabled')
-
-var = IntVar()
-bpm = 100
-time_sig = 8
-play = Checkbutton(mainwindow,variable=var, command=partial(backgroundmetro,start_stop, bpm,time_sig))
-#play.pack() #uncomment this line to test metronome
-
-student_label.pack()
-student_spin.pack()
-Clybutton.pack()
-metro_display.pack()
-
-
-
 #button to start other modules
 def recorderlaunch(bpm, beats, num_meas):
     print('Recording in progress')
@@ -454,6 +406,58 @@ def DSPlaunch(bpm, beats, num_meas):
     dsp.syncfiles(bpm.get(), beats.get(), num_meas.get())
 
 
+def mainwindow():
+    mainwindow = Tk()
+    mainwindow.title("NoteSync")
+    mainwindow.iconbitmap("NoteSync_icon.ico")
+    mainwindow.geometry("300x200")
+    main_menu = Menu(mainwindow)
+    mainwindow.config(menu=main_menu)
 
-mainwindow.mainloop()
+
+
+    #create new menu options
+
+    file_menu = Menu(main_menu)
+    # Dropdown menu at the top of GUI
+    main_menu.add_cascade(label="Options",menu=file_menu)
+    #file_menu.add_command(label="New...", command=new_command)
+    #file_menu.add_command(label="Save Location", command=save_command)
+    file_menu.add_command(label="Help", command=help)
+    file_menu.add_command(label="Authors", command=authors)
+    file_menu.add_command(label="Exit", command=mainwindow.quit)
+
+    # Button to activate 'TestClient.py'
+    #student = '2'
+    ipadd = '18.220.239.193'
+    #filename = 'audio2.wav'
+    current_value = '0'
+    student_label = Label(mainwindow, text ="Student number select", font=("32"))
+    student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"))
+
+    Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd))
+    global metrostatus
+    metrostatus = IntVar()
+
+    metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg='blue', textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
+
+    #metrostatus.set(0)
+
+    #metro_display.configure(state='disabled')
+
+    var = IntVar()
+    bpm = 100
+    time_sig = 8
+    play = Checkbutton(mainwindow,variable=var, command=partial(backgroundmetro,start_stop, bpm,time_sig))
+    #play.pack() #uncomment this line to test metronome
+
+    student_label.pack()
+    student_spin.pack()
+    Clybutton.pack()
+    metro_display.pack()
+
+    mainwindow.mainloop()
+initialpopup()
+mainwindow()
+
 

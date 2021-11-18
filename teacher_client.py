@@ -243,22 +243,22 @@ def background(func, arg1, arg2):
 #Gui module
 #############################
 
+def initialpopup():
+    Initialpopup = Tk()
+    Initialpopup.title("Welcome to NoteSync")
+    Initialpopup.iconbitmap("NoteSync_icon.ico")
 
-Initialpopup = Tk()
-Initialpopup.title("Welcome to NoteSync")
-Initialpopup.iconbitmap("NoteSync_icon.ico")
-
-logo = PhotoImage(file="NoteSync_logo.png")
-label1 = Label(Initialpopup, image= logo)
-label1.pack()
-label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning")
-label2.pack()
-#button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
-button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy )
-button1.pack()
-#button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
-#button2.pack()
-Initialpopup.mainloop()
+    logo = PhotoImage(file="NoteSync_logo.png")
+    label1 = Label(Initialpopup, image= logo)
+    label1.pack()
+    label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning")
+    label2.pack()
+    #button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
+    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy )
+    button1.pack()
+    #button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
+    #button2.pack()
+    Initialpopup.mainloop()
 def authors():
     authors_name = Tk()
     authors_name.title("Authors")
@@ -272,125 +272,54 @@ def authors():
     authors.pack()
     authors_name.mainloop()
 
-mainwindow = Tk()
-mainwindow.title("NoteSync")
-mainwindow.iconbitmap("NoteSync_icon.ico")
-mainwindow.geometry("700x200")
-main_menu = Menu(mainwindow)
-mainwindow.config(menu=main_menu)
-mainwindow.config(background='gray')
 
-#menu commands
-"""def new_command():
-    file_path0 = filedialog.askopenfilename()
-def save_command():
-    file_path = filedialog.asksaveasfilename()
-    file_selected = 1"""
 def help():
     tutorial = Tk()
     tutorial.title("Notesync User Guide")
     tutorial.iconbitmap("NoteSync_icon.ico")
     tutorial.geometry("700x500")
-    #gotit = Button(tutorial, text="Thanks for the help!", command=tutorial.destroy)
-    text_widget = Text(tutorial) #, height=400, width=40
-    #scroll_bar = Scrollbar(tutorial)
+    # gotit = Button(tutorial, text="Thanks for the help!", command=tutorial.destroy)
+    text_widget = Text(tutorial)  # , height=400, width=40
+    # scroll_bar = Scrollbar(tutorial)
 
-    #scroll_bar.pack(side=RIGHT, fill="y", expand=False)
+    # scroll_bar.pack(side=RIGHT, fill="y", expand=False)
     text_widget.pack(side=LEFT, fill="both", expand=True)
-    #text_widget.config(yscrollcommand=scroll_bar.set)
-    long_text =\
+    # text_widget.config(yscrollcommand=scroll_bar.set)
+    long_text = \
         """Please follow these steps to successfully operate NoteSync:
-        
+
             1.Assign each student a number and provide this to them so 
             the student(s) can input their number in the student version 
             of the application.
-        
+
             2.Select the Beats per minute that applies to your performance.
-        
+
             3.Select the time signature that applies to your performance.
-        
+
             4.Select the total number of measures in the performance.
-        
+
             5.When ready, select the "Open Server" button.
-        
+
             6.Immediately have each student select the "Run Client." 
             This action will start a countdown till the voice recording 
             starts for each student simultaneously. When finished, you 
             will receive all audio files ready to be synced.
-        
+
             7.Press the "Sync Files" option after all recordings have been
             received to initiate the syncing function.
-        
+
             8.All set! Check your program files for the resulting synced up
             file named "output.wav"
-        
+
             If you would like to utilize the metronome, you can at any time
             by toggling the on and off button. You can also record your own 
             audio by selecting the "Record Voice File."
-        
+
             Thank you for choosing NoteSync!!!!!!!!!
     """
     text_widget.insert(END, long_text)
     text_widget.configure(state='disabled')
-    #gotit.pack(side=BOTTOM)
-
-
-#create new menu options
-
-
-
-file_menu = Menu(main_menu)
-main_menu.add_cascade(label="Options",menu=file_menu)
-#file_menu.add_command(label="New...", command=new_command)
-#file_menu.add_command(label="Save Location", command=save_command)
-file_menu.add_command(label="Help", command=help)
-file_menu.add_command(label="Authors", command=authors)
-file_menu.add_command(label="Exit", command=mainwindow.quit)
-#BPM and time signature slider scale
-bpm_label = Label(mainwindow, text ="Beats Per Minute")#, bg="red", fg ="gray")
-bpm_label.place(x=175, y=10)
-bpm_slider = Scale(mainwindow, from_=1, to=200, orient=HORIZONTAL) #, tickinterval=100,orient=HORIZONTAL)
-bpm_slider.set(100)
-bpm_slider.place(x=325, y=10)
-time_sig_label = Label(mainwindow, text ="Time Signature Numerator")#, bg="red", fg ="gray")
-time_sig_label.place(x=150, y=50)
-time_sig_slider = Scale(mainwindow, from_=1, to=16,orient=HORIZONTAL)   #tickinterval=8,,orient=HORIZONTAL)
-time_sig_slider.set(4)
-time_sig_slider.place(x=325, y=50)
-time_sigd_label = Label(mainwindow, text ="Time Signature Denominator")#, bg="red", fg ="gray")
-time_sigd_label.place(x=150, y=90)
-time_sigd_slider = Scale(mainwindow, from_=1, to=8,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
-time_sigd_slider.set(4)
-time_sigd_slider.place(x=325, y=90)
-measures_label = Label(mainwindow, text ="Total Measures")#, bg="red", fg ="gray")
-measures_label.place(x=175, y =140)
-measures_slider = Scale(mainwindow, from_=1, to=80,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
-measures_slider.set(8)
-measures_slider.place(x=325, y=130)
-# Dropbox for delays
-Delay1_label = Label(mainwindow, text ="Student 1 Delay")
-Delay1_label.place(x=10, y=10)
-S1 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
-S1.place(x=98, y=10)
-Delay2_label = Label(mainwindow, text ="Student 2 Delay")
-Delay2_label.place(x=10, y=30)
-S2 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
-S2.place(x=98, y=30)
-Delay3_label = Label(mainwindow, text ="Student 3 Delay")
-Delay3_label.place(x=10, y=50)
-S3 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
-S3.place(x=98, y=50)
-Delay4_label = Label(mainwindow, text ="Student 4 Delay")
-Delay4_label.place(x=10, y=70)
-S4 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
-S4.place(x=98, y=70)
-Delay5_label = Label(mainwindow, text ="Student 5 Delay")
-Delay5_label.place(x=10, y=90)
-S5 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
-S5.place(x=98, y=90)
-Delay6_label = Label(mainwindow, text ="(whole measures)")
-Delay6_label.place(x=15, y=110)
-#(whole measures)
+    # gotit.pack(side=BOTTOM)
 #button to start other modules
 def recorderlaunch(bpm, beats, num_meas):
     print('Recording in progress')
@@ -408,35 +337,114 @@ def serverlaunch():
 
 def start_stop(bpm, beats):
     global gnomestatus
-    if var.get()== 1:
+    if mainwindow.var.get()== 1:
         gnomestatus = True
         gnome.metronome(bpm.get(), beats.get())
     else:
         gnomestatus = False
         gnome.metronome(bpm.get(), beats.get())
 
-record_button = Button(mainwindow, text='Record Voice File', command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
-record_button.place(x=500, y=10)
-start_server = Button(mainwindow, text='Open Server',command= serverlaunch) #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
-start_server.place(x=520, y=150)
-sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider))
-sync_files.place(x=525, y=50)
-# global play
-image = Image.open('Off.png')
-image2 = Image.open('On.png')
-resize_image = image.resize((100,50))
-resize_image2 = image2.resize((100,50))
-off = itk.PhotoImage(resize_image)
-on = itk.PhotoImage(resize_image2)
-var = IntVar()
-play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_slider))
-play.place(x=500, y=90)
-#play = Button(mainwindow, bd = 0, image = off, command=partial(start_stop, bpm_slider,time_sig_slider)).pack()
-#Opening the maintask window with some random stuff to fil the window
-#two = Label(mainwindow, text ="TBD", bg="green", fg ="black")
-#two.pack(fill=X)
-#three = Label(mainwindow, text ="TBD", bg="blue", fg ="white")
-#three.pack(side=LEFT, fill=Y)
 
-mainwindow.mainloop()
+
+def mainwindow():
+    mainwindow = Tk()
+    mainwindow.title("NoteSync")
+    mainwindow.iconbitmap("NoteSync_icon.ico")
+    mainwindow.geometry("700x200")
+    main_menu = Menu(mainwindow)
+    mainwindow.config(menu=main_menu)
+    mainwindow.config(background='gray')
+
+    #menu commands
+    """def new_command():
+        file_path0 = filedialog.askopenfilename()
+    def save_command():
+        file_path = filedialog.asksaveasfilename()
+        file_selected = 1"""
+
+
+
+    #create new menu options
+
+
+
+    file_menu = Menu(main_menu)
+    main_menu.add_cascade(label="Options",menu=file_menu)
+    #file_menu.add_command(label="New...", command=new_command)
+    #file_menu.add_command(label="Save Location", command=save_command)
+    file_menu.add_command(label="Help", command=help)
+    file_menu.add_command(label="Authors", command=authors)
+    file_menu.add_command(label="Exit", command=mainwindow.quit)
+    #BPM and time signature slider scale
+    bpm_label = Label(mainwindow, text ="Beats Per Minute")#, bg="red", fg ="gray")
+    bpm_label.place(x=175, y=10)
+    bpm_slider = Scale(mainwindow, from_=1, to=200, orient=HORIZONTAL) #, tickinterval=100,orient=HORIZONTAL)
+    bpm_slider.set(100)
+    bpm_slider.place(x=325, y=10)
+    time_sig_label = Label(mainwindow, text ="Time Signature Numerator")#, bg="red", fg ="gray")
+    time_sig_label.place(x=150, y=50)
+    time_sig_slider = Scale(mainwindow, from_=1, to=16,orient=HORIZONTAL)   #tickinterval=8,,orient=HORIZONTAL)
+    time_sig_slider.set(4)
+    time_sig_slider.place(x=325, y=50)
+    time_sigd_label = Label(mainwindow, text ="Time Signature Denominator")#, bg="red", fg ="gray")
+    time_sigd_label.place(x=150, y=90)
+    time_sigd_slider = Scale(mainwindow, from_=1, to=8,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
+    time_sigd_slider.set(4)
+    time_sigd_slider.place(x=325, y=90)
+    measures_label = Label(mainwindow, text ="Total Measures")#, bg="red", fg ="gray")
+    measures_label.place(x=175, y =140)
+    measures_slider = Scale(mainwindow, from_=1, to=80,orient=HORIZONTAL)   #,tickinterval=8,orient=HORIZONTAL)
+    measures_slider.set(8)
+    measures_slider.place(x=325, y=130)
+    # Dropbox for delays
+    Delay1_label = Label(mainwindow, text ="Student 1 Delay")
+    Delay1_label.place(x=10, y=10)
+    S1 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
+    S1.place(x=98, y=10)
+    Delay2_label = Label(mainwindow, text ="Student 2 Delay")
+    Delay2_label.place(x=10, y=30)
+    S2 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
+    S2.place(x=98, y=30)
+    Delay3_label = Label(mainwindow, text ="Student 3 Delay")
+    Delay3_label.place(x=10, y=50)
+    S3 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
+    S3.place(x=98, y=50)
+    Delay4_label = Label(mainwindow, text ="Student 4 Delay")
+    Delay4_label.place(x=10, y=70)
+    S4 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
+    S4.place(x=98, y=70)
+    Delay5_label = Label(mainwindow, text ="Student 5 Delay")
+    Delay5_label.place(x=10, y=90)
+    S5 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True)
+    S5.place(x=98, y=90)
+    Delay6_label = Label(mainwindow, text ="(whole measures)")
+    Delay6_label.place(x=15, y=110)
+    #(whole measures)
+    record_button = Button(mainwindow, text='Record Voice File', command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
+    record_button.place(x=500, y=10)
+    start_server = Button(mainwindow, text='Open Server',command= serverlaunch) #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
+    start_server.place(x=520, y=150)
+    sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider))
+    sync_files.place(x=525, y=50)
+    # global play
+    image = Image.open('Off.png')
+    image2 = Image.open('On.png')
+    resize_image = image.resize((100,50))
+    resize_image2 = image2.resize((100,50))
+    off = itk.PhotoImage(resize_image)
+    on = itk.PhotoImage(resize_image2)
+    var = IntVar()
+    play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_slider))
+    play.place(x=500, y=90)
+    #play = Button(mainwindow, bd = 0, image = off, command=partial(start_stop, bpm_slider,time_sig_slider)).pack()
+    #Opening the maintask window with some random stuff to fil the window
+    #two = Label(mainwindow, text ="TBD", bg="green", fg ="black")
+    #two.pack(fill=X)
+    #three = Label(mainwindow, text ="TBD", bg="blue", fg ="white")
+    #three.pack(side=LEFT, fill=Y)
+
+    mainwindow.mainloop()
+
+initialpopup()
+mainwindow()
 
