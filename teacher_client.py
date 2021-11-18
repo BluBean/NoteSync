@@ -77,8 +77,8 @@ def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
     returns: number of samples gets returned
     '''
     #Find duration for offset and main piece and combine the values for total number of samples
-    Dur_Offset = dsp.calc_duration(bpm, time_sig_slider, num_measures)
-    Dur_Main = dsp.calc_duration(bpm, time_sig_slider, tot_measures)
+    Dur_Offset = dsp.calc_duration(bpm, mainwindow.time_sig_slider, num_measures)
+    Dur_Main = dsp.calc_duration(bpm, mainwindow.time_sig_slider, tot_measures)
     value = Dur_Main + Dur_Offset
     return value
 
@@ -88,7 +88,7 @@ def pull_values():
     """
     Pull values from metronome.
     """
-    bpm_value = bpm_slider.get()
+    bpm_value = mainwindow.bpm_slider.get()
 
 
     return bpm_value, 0, 0
@@ -196,44 +196,44 @@ class dsp:
 # --- output ---
 # write to .wav file
 ###########################################################
-class voicerecorder:
-    ## record(<samples in recording>, <samples in offset>)
-    def record(rec_samples, offset):
-        fs = 48000  # Sample rate
-        duration = rec_samples  # Duration of recording (samples)
-        print('offset (samples): ', offset)
-        # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-        myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
-        sd.wait()  # Wait until recording is finished
-        # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('test.wav', myrecording, fs, subtype='PCM_16')
-        print('voice recording saved')
+
+## record(<samples in recording>, <samples in offset>)
+def record(rec_samples, offset):
+    fs = 48000  # Sample rate
+    duration = rec_samples  # Duration of recording (samples)
+    print('offset (samples): ', offset)
+     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
+    myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
+    sd.wait()  # Wait until recording is finished
+    # write('input1.wav', fs, myrecording)  # Save as WAV file
+    sf.write('test.wav', myrecording, fs, subtype='PCM_16')
+    print('voice recording saved')
 
 #############################
 # Metronome module
 #############################
-class gnome:
+
     # Collect beats per minute and time signature from user
   #  bpm = int(input("Enter bpm value: "))
   #  tsig = int(input("Enter bpb value: "))
 
 
     # define metronome tool
-    def metronome(bpm, tsig):
-        global gnomestatus
-        sleep = 60.0 / bpm
-        counter = 0
-        while gnomestatus: # =True:
-            counter += 1
-            if counter % tsig:
-                print(f'tock')
-                playsound('tock.wav', False)
-            else:
-                print(f'TICK')
-                playsound('Tick.wav', False)
-                time.sleep(sleep)
-                mainwindow.after(1,start_stop(bpm_slider, time_sig_slider))
+def metronome(bpm, tsig):
+    global gnomestatus
+    sleep = 60.0 / bpm
+    counter = 0
+    while gnomestatus: # =True:
+        counter += 1
+        if counter % tsig:
+            print(f'tock')
+            playsound('tock.wav', False)
+        else:
+            print(f'TICK')
+            playsound('Tick.wav', False)
             time.sleep(sleep)
+            mainwindow.after(1,start_stop(mainwindow.bpm_slider, mainwindow.time_sig_slider))
+        time.sleep(sleep)
 
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
@@ -326,7 +326,7 @@ def recorderlaunch(bpm, beats, num_meas):
     rec_length = beats.get() * (num_meas.get() / bpm.get()) #length in seconds
     samples = 48000 * 60 * rec_length  #length to record based on GUI (samples)
     offset_size = 48000 * 60 * (beats.get()/bpm.get())  # samples per measure or known as the amount of samples in an offset
-    voicerecorder.record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
+    record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
 
 def DSPlaunch(bpm, beats, num_meas):
     #print('sync files button worked')
@@ -339,12 +339,13 @@ def start_stop(bpm, beats):
     global gnomestatus
     if mainwindow.var.get()== 1:
         gnomestatus = True
-        gnome.metronome(bpm.get(), beats.get())
+        metronome(bpm.get(), beats.get())
     else:
         gnomestatus = False
-        gnome.metronome(bpm.get(), beats.get())
+        metronome(bpm.get(), beats.get())
 
-
+def sendit():
+    print("I'm not programmed yet slut!")
 
 def mainwindow():
     mainwindow = Tk()
@@ -354,6 +355,7 @@ def mainwindow():
     main_menu = Menu(mainwindow)
     mainwindow.config(menu=main_menu)
     mainwindow.config(background='gray')
+
 
     #menu commands
     """def new_command():
@@ -423,9 +425,11 @@ def mainwindow():
     record_button = Button(mainwindow, text='Record Voice File', command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
     record_button.place(x=500, y=10)
     start_server = Button(mainwindow, text='Open Server',command= serverlaunch) #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
-    start_server.place(x=520, y=150)
+    start_server.place(x=500, y=150)
     sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider))
     sync_files.place(x=525, y=50)
+    send_data = Button(mainwindow, text='Send Data',command= sendit) #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
+    send_data.place(x=600, y=150)
     # global play
     image = Image.open('Off.png')
     image2 = Image.open('On.png')

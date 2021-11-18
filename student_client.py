@@ -1,4 +1,6 @@
 import os, socket, sys
+
+
 import sounddevice as sd
 import soundfile as sf
 from inspect import signature
@@ -270,7 +272,7 @@ def metronome(bpm, tsig):
             metrovalue = tsig
             metrostatus.set(metrovalue)
             time.sleep(sleep)
-            mainwindow.after(1,start_stop(bpm, time_sig))
+            mainwindow.after(1,start_stop(bpm, tsig))
 
         time.sleep(sleep)
 
@@ -383,6 +385,9 @@ def runClient(student ,ipadd):
     print(ipadd)
     stu = student.get()
     filename = 'audio' + stu + '.wav'
+    f = open(filename, "w+")
+    f.close()
+
     main(stu, ipadd, filename)
 
 def start_stop(bpm, beats):
