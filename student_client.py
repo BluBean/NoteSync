@@ -217,14 +217,14 @@ def initialpopup():
     Initialpopup = Tk()
     Initialpopup.title("Welcome to NoteSync")
     Initialpopup.iconbitmap("NoteSync_icon.ico")
-
-    logo = PhotoImage(file="NoteSync_logo.png")
-    label1 = Label(Initialpopup, image= logo)
+    Initialpopup.config(background='#5865F2')
+    logo = PhotoImage(file="NoteSync_logo_purp.png")
+    label1 = Label(Initialpopup, image= logo, bg = "#5865F2")
     label1.pack()
-    label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning")
+    label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning", bg = "#5865F2")
     label2.pack()
     #button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
-    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy )
+    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy, bg = "#FFFFFF")
     button1.pack()
     #button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
     #button2.pack()
@@ -235,11 +235,12 @@ def authors():
     authors_name.title("Authors")
     authors_name.iconbitmap("NoteSync_icon.ico")
     authors_name.geometry("700x100")
-    authors_label = Label(authors_name, text ="Notesync created by: Alec Dorn, Brandon Buccola, David Pivonka, Lance McKay, and Michael Moreno")
+    authors_name.config(background='#5865F2')
+    authors_label = Label(authors_name, text ="Notesync created by: Alec Dorn, Brandon Buccola, David Pivonka, Lance McKay, and Michael Moreno", bg = "#5865F2")
     authors_label.pack()
-    mentor_label = Label(authors_name, text ="Program Mentor: Shamala Chickamenahalli")
+    mentor_label = Label(authors_name, text ="Program Mentor: Shamala Chickamenahalli", bg = "#5865F2")
     mentor_label.pack()
-    authors = Button(authors_name, text="OK", command=authors_name.destroy)
+    authors = Button(authors_name, text="OK", command=authors_name.destroy, bg = "#FFFFFF")
     authors.pack()
     authors_name.mainloop()
 
@@ -317,6 +318,7 @@ def mainwindow():
     mainwindow.iconbitmap("NoteSync_icon.ico")
     mainwindow.geometry("300x200")
     main_menu = Menu(mainwindow)
+    mainwindow.config(background='#5865F2')
     mainwindow.config(menu=main_menu)
 
 
@@ -338,14 +340,14 @@ def mainwindow():
     ipadd= '127.0.0.1'
     #filename = 'audio2.wav'
     current_value = '0'
-    student_label = Label(mainwindow, text ="Student number select", font=("32"))
-    student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"))
+    student_label = Label(mainwindow, text ="Student number select", font=("32"), bg = "#5865F2")
+    student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"), bg = "#5865F2")
 
-    Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd))
+    Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#FFFFFF")
     global metrostatus
     metrostatus = IntVar()
 
-    metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg='blue', textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
+    metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg="#5865F2", textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
 
     #metrostatus.set(0)
 
