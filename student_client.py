@@ -224,7 +224,7 @@ def initialpopup():
     label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning", bg = "#5865F2")
     label2.pack()
     #button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
-    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy, bg = "#FFFFFF")
+    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy, bg = "#F6F6F6")
     button1.pack()
     #button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
     #button2.pack()
@@ -343,7 +343,7 @@ def mainwindow():
     student_label = Label(mainwindow, text ="Student number select", font=("32"), bg = "#5865F2")
     student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"), bg = "#5865F2")
 
-    Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#FFFFFF")
+    Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#F6F6F6")
     global metrostatus
     metrostatus = IntVar()
 
