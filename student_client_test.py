@@ -114,7 +114,7 @@ def record(bpm, t_sig,tot_measures, offset, student):
     fs = 48000  # Sample rate
     print('offset (samples): ', offset)
     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-    myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
+    myrecording = sd.rec(int(samples), samplerate=fs, channels=2)
     sd.wait()  # Wait until recording is finished
     # write('input1.wav', fs, myrecording)  # Save as WAV file
     sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
