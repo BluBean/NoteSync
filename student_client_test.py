@@ -56,23 +56,15 @@ def stu_main():
 
         bpm, t_sig, tot_measures = metronome.split(b',')
         print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
-        #deconstruct values
-        bpm = int(bpm)
-        t_sig = int(t_sig)
-        tot_measures = int(tot_measures)
-        print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
-
-        #calculate recording length from GUI
-        rec_length = t_sig *60* (tot_measures / bpm)  # length (unit: seconds)
-        samples = 48000 * rec_length  # length to record based on GUI (unit: samples)
-        offset_size = 48000 * 60 * (t_sig/ bpm)  # samples per measure or known as the amount of samples in an offset
+        #change bytes to int
+        deconstruct(bpm, t_sig, tot_measures)
 
         # get and store offset value for student (samples)
         offset = s.recv(1024)
         print(offset)
 
         # record and save recording
-        record(samples, offset_size, offset)  # (<duration of recording>, <offset>) (samples)
+        record(bpm, t_sig,tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
         l = f.read(4096)
@@ -97,7 +89,15 @@ while not connected:
     except Exception as e:
         pass #Do nothing, just try again
 """
-
+##########################################################
+##Deconstruct file variables
+##########################################################
+def deconstruct(bpm, t_sig, tot_measures):
+    bpm = int(bpm)
+    t_sig = int(t_sig)
+    tot_measures = int(tot_measures)
+    print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
+    return bpm,t_sig, tot_measures
 
 ###########################################################
 #### Voice recorder MODULE
@@ -111,10 +111,12 @@ while not connected:
 ###########################################################
 
 
-def record(rec_samples,offset_size, offset):
-
+def record(bpm, t_sig,tot_measures, offset, student):
+    # calculate recording length from GUI
+    duration = t_sig * 60 * (tot_measures / bpm)  # length (unit: seconds)
+    samples = 48000 * duration  # length to record based on GUI (unit: samples)
+    offset_size = 48000 * 60 * (t_sig / bpm)  # samples per measure or known as the amount of samples in an offset
     fs = 48000  # Sample rate
-    duration = rec_samples  # Duration of recording (samples)
     print('offset (samples): ', offset)
     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
     myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
