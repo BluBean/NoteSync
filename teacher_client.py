@@ -423,7 +423,7 @@ def mainwindow():
     Delay6_label.place(x=15, y=110)
     #(whole measures)
     record_button = Button(mainwindow, text='Record Voice File', command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
-    record_button.place(x=500, y=10)
+    #record_button.place(x=500, y=10)
     start_server = Button(mainwindow, text='Open Server',command= serverlaunch) #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
     start_server.place(x=500, y=150)
     sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider))

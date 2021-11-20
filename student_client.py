@@ -90,10 +90,10 @@ def main(student, host, file):
         #print(offset)
         metronome = s.recv(1024)  # get and store metronome values in a list (bpm, num_measures, tot_measures)
         print(metronome)
-        bpm, num_measures, tot_measures = metronome.split(b',')
-        print('bpm: ', bpm, 'num_measures: ', num_measures, 'tot_measures: ', tot_measures)
+        bpm, time_sig, tot_measures = metronome.split(b',')
+        print('bpm: ', bpm, 'time_sig: ', time_sig, 'tot_measures: ', tot_measures)
         # record and save recording
-
+        backgroundmetro(metronome, bpm, time_sig)
         record(240000, offset)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
@@ -434,7 +434,8 @@ def mainwindow():
 
     # Button to activate 'TestClient.py'
     #student = '2'
-    ipadd = '18.220.239.193'
+    #ipadd = '18.220.239.193'
+    ipadd= '127.0.0.1'
     #filename = 'audio2.wav'
     current_value = '0'
     student_label = Label(mainwindow, text ="Student number select", font=("32"))

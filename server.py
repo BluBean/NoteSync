@@ -7,6 +7,9 @@ from _thread import *
 from typing import List
 import json
 import time
+import numpy as np
+from pydub import AudioSegment
+import soundfile as sf
 
 
 # Globals
@@ -96,6 +99,88 @@ def main():
         #####################################
         #   mix audio files from students   #
         #####################################
+        #################################################################
+        # Calculates offset required
+        #
+        # --- inputs:
+        # beats = beats per measure (from selected time signature)
+        # num_meas = number of measures from song start
+        #                     to when student begins
+        # bpm = beats per minute (tempo)
+        #rec_length = beats.get() * (num_meas.get() / bpm.get()) #length in seconds
+        #samples = 48000 * 60 * rec_length  #length to record based on GUI (samples)
+        #offset_size = 48000 * 60 * (beats.get()/bpm.get())  # samples per measure or known as the amount of samples in an offset
+        # --- output:
+        # duration = milliseconds of buffer required
+        #################################################################
+        def calc_duration(bpm, beats, num_meas):
+            duration = beats * (num_meas / bpm)
+            print('duration: ', duration)
+            return duration
+
+            """      def read_audio(audio_file):
+            rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
+            return data, rate"""
+
+        def syncfiles(bpm, beats, num_meas):
+            """            s1, fs1 = sf.read('audio1.wav')  # get data, samplerate
+            info1 = sf.info('audio1.wav')
+            # bits1 = sf.samplerate('audio1.wav')
+            print(info1)
+
+            s2, fs2 = sf.read('audio2.wav')
+            info2 = sf.info('audio2.wav')
+            # bits2 = sf.samplerate('audio2.wav')
+            print('\n', info2)"""
+            # print(s1, fs1, s2, fs2)
+            data, samplerate,length = int()
+            num_files =len(s_download_seq.sid)
+            main_file = AudioSegment.from_file("audio"+s_download_seq.sid[0]+".wav", format="wav")
+            boost = main_file + 9  # audio1 x dB louder (clipping)
+            if num_files != 1:
+                for id in s_download_seq.sid:
+                    dat,samplerat= sf.read('audio'+id+'.wav')
+                    data[id]=dat
+                    samplerate[id]=samplerat
+                    info = sf.info('audio'+id+'.wav')
+                    print('\n', info)
+                if id <= num_files-1:
+                    currentval = [id]+1
+                    addition_file = AudioSegment.from_file("audio"+currentval+".wav", format="wav")
+                    boost = boost.overlay(addition_file, position=0)  # Overlay audio2 over audio1
+            file_handle = boost.export("buffered_overlay.wav", format="wav")
+            #audio1 = AudioSegment.from_file("audio2.wav", format="wav")
+            #audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
+            #boost1 = audio1 + 9  # audio1 x dB louder (clipping)
+            #overlay = boost1.overlay(audio2, position=0)  # Overlay audio2 over audio1
+              # export overlaid wav files
+            #for id in range(num_itterations):
+                #length[id] = len(samplerate[id]) # total number of samples
+                #length[id+1] = len(samplerate[id+1])
+                #print(length[id],length[id+1])
+                #max_samples = max(length[id],length[id+1])  # file with greatest number of samples
+                #min_samples = min(length[id],length[id+1])
+                #samples_offset = abs(max_samples - min_samples)
+                #print(samples_offset)
+            # e = s1-s2 # difference signal
+            #l1 = len(s1)  # total number of samples
+            #l2 = len(s2)
+            #print(l1, l2)
+            #max_samples = max(l1, l2)  # file with greatest number of samples
+            #min_samples = min(l1, l2)
+            #samples_offset = abs(max_samples - min_samples)
+            #print(samples_offset)
+
+            # add buffer to beginning of shorter audio file
+            #buffer = np.zeros(samples_offset)  # generate buffer
+            # print(buffer)
+
+            #sf.write('buffer.wav', buffer, 48000)  # create buffer .wav file
+            #audio = AudioSegment.from_file('audio1.wav', format="wav")  # open both .wav files to write
+            #buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
+            #combined = buffer_audio + audio  # audio with buffer appended at beginning
+            #file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file
+
 
 
 
@@ -152,7 +237,7 @@ def t_download_seq(conn, addr):
     #f.close()
 
     # send the recorded file back to server
-    with open('audio1.wav', 'rb') as f:
+    with open('buffered_overlay.wav', 'rb') as f:
         print("Sending...")
         l = f.read(4096)
         while (l):

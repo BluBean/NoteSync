@@ -57,12 +57,17 @@ def stu_main():
         bpm, t_sig, tot_measures = metronome.split(b',')
         print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
 
+        #calculate recording length from GUI
+        rec_length = t_sig * (tot_measures / bpm)  # length (unit: seconds)
+        samples = 48000 * 60 * rec_length  # length to record based on GUI (unit: samples)
+        offset_size = 48000 * 60 * (t_sig/ bpm)  # samples per measure or known as the amount of samples in an offset
+
         # get and store offset value for student (samples)
         offset = s.recv(1024)
         print(offset)
 
         # record and save recording
-        voicerecorder.record(240000, offset)  # (<duration of recording>, <offset>) (samples)
+        record(samples, offset_size, offset)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
         l = f.read(4096)
@@ -100,17 +105,22 @@ while not connected:
 # write to .wav file
 ###########################################################
 
-class voicerecorder:
-    def record(rec_samples, offset):
-        fs = 48000  # Sample rate
-        duration = rec_samples  # Duration of recording (samples)
-        print('offset (samples): ', offset)
-        # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-        myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
-        sd.wait()  # Wait until recording is finished
-        # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
-        print('voice recording saved')
+
+def record(rec_samples,offset_size, offset):
+
+    fs = 48000  # Sample rate
+    duration = rec_samples  # Duration of recording (samples)
+    print('offset (samples): ', offset)
+    # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
+    myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
+    sd.wait()  # Wait until recording is finished
+    # write('input1.wav', fs, myrecording)  # Save as WAV file
+    sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
+    print('voice recording saved')
+##########################################################
+#### Metronome
+#
+###########################################################
 
 
 ### main program ###

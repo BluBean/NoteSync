@@ -113,7 +113,7 @@ def pull_metronome() -> str:
     else:
         tot_measures= "0"+str(tot_measures)
 
-    print(str(bpm) + "," + str(t_sig) + "," + str(tot_measures))
+    #print(str(bpm) + "," + str(t_sig) + "," + str(tot_measures))
 
     return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
 
