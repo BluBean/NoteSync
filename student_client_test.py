@@ -48,11 +48,10 @@ def stu_main():
         s.connect((host, S_PORT))
         s.send(str.encode(student))
         print("Sending student ID", student)
-        print(str.encode(student))
 
         # get and store metronome values in a list (bpm, num_measures, tot_measures)
         metronome = s.recv(11)
-        print(metronome)
+        print('metronome: ', metronome)
 
         bpm, t_sig, tot_measures = metronome.split(b',')
         print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
@@ -60,10 +59,10 @@ def stu_main():
 
         # get and store offset value for student (samples)
         offset = s.recv(1024)
-        print(offset)
+        print('offset: ', offset)
 
         # record and save recording
-        record(bpm, t_sig,tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
+        #record(bpm, t_sig, tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
         l = f.read(4096)
@@ -102,7 +101,7 @@ while not connected:
 ###########################################################
 
 
-def record(bpm, t_sig,tot_measures, offset, student):
+def record(bpm, t_sig, tot_measures, offset, student):
     bpm = int(bpm)
     t_sig = int(t_sig)
     tot_measures = int(tot_measures)
@@ -119,6 +118,8 @@ def record(bpm, t_sig,tot_measures, offset, student):
     # write('input1.wav', fs, myrecording)  # Save as WAV file
     sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
     print('voice recording saved')
+
+
 ##########################################################
 #### Metronome
 #

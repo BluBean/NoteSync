@@ -51,6 +51,7 @@ def send_GUI_data(ids):
 
     return
 
+
 # receive final mix as WAV
 def receive_mix():
 
@@ -96,9 +97,9 @@ def pull_metronome() -> str:
     """    bpm = mainwindow.bpm_slider.get()
     t_sig = mainwindow.time_sig_slider.get()
     tot_measures = mainwindow.measures_slider.get()"""
-    bpm = 100
+    bpm = 72
     t_sig = 4
-    tot_measures = 10
+    tot_measures = 4
     # bit manipulation
     if bpm < 10:
         bpm = "00"+str(bpm)
@@ -151,7 +152,6 @@ def teacher_main():
         notify = s.recv(4)  # waits for notification from server
         print("received notification: ", notify)
         if notify == b'done':
-            print("break statement")
             break
         elif notify != b'done':
             s.close()
