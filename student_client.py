@@ -42,30 +42,8 @@ def main(student, host, file):
     # file = sys.argv[3]
     S_PORT = 60002  # Reserve a port for your service.
 
-    ###########################################################
-    #### Voice recorder MODULE
-    #
-    # --- inputs ---
-    # rec_samples = duration of recording (samples)
-    # offset = buffer duration (samples)
-    #
-    # --- output ---
-    # write to .wav file
-    ###########################################################
 
-    def record(rec_samples, offset):
-        #print('checkpoint recorder')
-        mainwindow.metro_display.configure(bg='red')
-        fs = 48000  # Sample rate
-        duration = rec_samples  # Duration of recording (samples)
-        print('offset (samples): ', offset)
-        # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-        myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
-        sd.wait()  # Wait until recording is finished
-        # write('input1.wav', fs, myrecording)  # Save as WAV file
-        sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
-        print('voice recording saved')
-        mainwindow.metro_display.configure(bg='blue')
+
 
     ### main client program ###
     if len(params) != 3:
@@ -86,15 +64,30 @@ def main(student, host, file):
         # Send student number, get offset
         s.connect((host, S_PORT))
         s.send(str.encode(student))
+        print("Sending student ID", student)
+        print(str.encode(student))
+
         offset = s.recv(1024)  # get and store offset value for student (samples)
         #print(offset)
         metronome = s.recv(1024)  # get and store metronome values in a list (bpm, num_measures, tot_measures)
         print(metronome)
-        bpm, time_sig, tot_measures = metronome.split(b',')
-        print('bpm: ', bpm, 'time_sig: ', time_sig, 'tot_measures: ', tot_measures)
+        bpm, t_sig, tot_measures = metronome.split(b',')
+        print('bpm: ', bpm, 'time_sig: ', t_sig, 'tot_measures: ', tot_measures)
+        #deconstruct values
+        bpm = int(bpm)
+        t_sig = int(t_sig)
+        tot_measures = int(tot_measures)
+        print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
+
+        #calculate recording length from GUI
+        rec_length = t_sig *60* (tot_measures / bpm)  # length (unit: seconds)
+        samples = 48000 * rec_length  # length to record based on GUI (unit: samples)
+        offset_size_sec =60 * (t_sig/ bpm) #time per measure in seconds, so seconds per measure
+        offset_size = 48000 * 60 * (t_sig/ bpm)  # samples per measure or known as the amount of samples in an offset
+
         # record and save recording
-        backgroundmetro(metronome, bpm, time_sig)
-        record(240000, offset)  # (<duration of recording>, <offset>) (samples)
+        backgroundmetro(metronome, bpm, t_sig)
+        record(samples,offset_size_sec, offset,student)  # (<duration of recording>,<offset_size>, <offset>, <student#>) (samples)
 
         print("Sending...")
         l = f.read(4096)
@@ -128,95 +121,6 @@ def main(student, host, file):
 
 
 ###########################################################
-#### Client MODULE
-###########################################################
-###########################################################
-#### Various functions
-###########################################################
-
-
-###########################################################
-####DSP MODULE
-###########################################################
-class dsp:
-    """
-    sf1 = sf.SoundFile('audio1.wav')
-    print('samples = {}'.format(sf1.frames))
-    print('sample rate = {}'.format(sf1.samplerate))
-    print('seconds = {}'.format(sf1.frames / sf1.samplerate))
-    ls1 = sf1.frames
-    print(ls1)
-
-    sf2 = sf.SoundFile('audio2.wav')
-    print('samples = {}'.format(sf2.frames))
-    print('sample rate = {}'.format(sf2.samplerate))
-    print('seconds = {}'.format(sf2.frames / sf2.samplerate))
-    ls2 = sf2.frames
-    print(ls2)
-    """
-
-    #################################################################
-    # Calculates offset required
-    #
-    # --- inputs:
-    # beats = beats per measure (from selected time signature)
-    # num_meas = number of measures from song start
-    #                     to when student begins
-    # bpm = beats per minute (tempo)
-    #
-    # --- output:
-    # duration = milliseconds of buffer required
-    #################################################################
-    def syncfiles(bpm, beats, num_meas):
-        def testvariables(bpm, beats, num_meas):
-            print ("this is test of gui sliders \n bpm = ", bpm,"\n beats= ", beats,"\n measures= ", num_meas)
-        def calc_duration(bpm, beats, num_meas):
-            duration = beats * (num_meas / bpm)
-            print('duration: ', duration)
-
-        def read_audio(audio_file):
-            rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
-            return data, rate
-
-
-        s1, fs1 = sf.read('audio1.wav')  # get data, samplerate
-        info1 = sf.info('audio1.wav')
-        # bits1 = sf.samplerate('audio1.wav')
-        print(info1)
-
-        s2, fs2 = sf.read('audio2.wav')
-        info2 = sf.info('audio2.wav')
-        # bits2 = sf.samplerate('audio2.wav')
-        print('\n', info2)
-        # print(s1, fs1, s2, fs2)
-
-        # e = s1-s2 # difference signal
-        l1 = len(s1)  # total number of samples
-        l2 = len(s2)
-        print(l1, l2)
-        max_samples = max(l1, l2)  # file with greatest number of samples
-        min_samples = min(l1, l2)
-        samples_offset = abs(max_samples - min_samples)
-        print(samples_offset)
-
-        # add buffer to beginning of shorter audio file
-        buffer = np.zeros(samples_offset)  # generate buffer
-        # print(buffer)
-
-        sf.write('buffer.wav', buffer, 48000)  # create buffer .wav file
-        audio = AudioSegment.from_file('audio1.wav', format="wav")  # open both .wav files to write
-        buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
-        combined = buffer_audio + audio  # audio with buffer appended at beginning
-        file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file
-
-        audio1 = AudioSegment.from_file("audio2.wav", format="wav")
-        audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
-        boost1 = audio1 + 9  # audio1 x dB louder (clipping)
-        overlay = boost1.overlay(audio2, position=0)  # Overlay audio2 over audio1
-        file_handle = overlay.export("buffered_overlay.wav", format="wav")  # export overlaid wav files
-        testvariables(bpm, beats, num_meas)
-
-###########################################################
 #### Voice recorder MODULE
 #
 # --- inputs ---
@@ -226,10 +130,11 @@ class dsp:
 # --- output ---
 # write to .wav file
 ###########################################################
-
-    ## record(<samples in recording>, <samples in offset>)
-"""def record(rec_samples, offset):
-    metro_display.configure(bg='red')        
+def record(rec_samples,offset_size, offset, student):
+    delay_display = (offset_size * offset)
+    threading.timer(delay_display,mainwindow.metro_display.configure(bg='red') ).start()
+    # print('checkpoint recorder')
+    #mainwindow.metro_display.configure(bg='red')
     fs = 48000  # Sample rate
     duration = rec_samples  # Duration of recording (samples)
     print('offset (samples): ', offset)
@@ -239,18 +144,21 @@ class dsp:
     # write('input1.wav', fs, myrecording)  # Save as WAV file
     sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
     print('voice recording saved')
-    metro_display.configure(bg='blue')"""
+    mainwindow.metro_display.configure(bg='blue')
+
+###########################################################
+#### Client MODULE
+###########################################################
+###########################################################
+#### Various functions
+###########################################################
 
 #############################
 # Metronome module
 #############################
-
-
   # Collect beats per minute and time signature from user
   #  bpm = int(input("Enter bpm value: "))
   #  tsig = int(input("Enter bpb value: "))
-
-
 
     # define metronome tool
 def metronome(bpm, tsig):
@@ -304,9 +212,6 @@ def backgroundmetro(func, bpm, tsig):
 #############################
 #Gui module
 #############################
-
-
-
 
 def initialpopup():
     Initialpopup = Tk()
@@ -405,11 +310,6 @@ def recorderlaunch(bpm, t_sig, tot_meas):
     samples = 48000 * 60 * rec_length  #length to record based on GUI (samples)
     offset_size = 48000 * 60 * (t_sig/bpm)  # samples per measure or known as the amount of samples in an offset
     main.record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
-
-def DSPlaunch(bpm, beats, num_meas):
-    #print('sync files button worked')
-    dsp.syncfiles(bpm.get(), beats.get(), num_meas.get())
-
 
 def mainwindow():
     mainwindow = Tk()
