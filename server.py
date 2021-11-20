@@ -237,7 +237,7 @@ def t_download_seq(conn, addr):
     #f.close()
 
     # send the recorded file back to server
-    with open('buffered_overlay.wav', 'rb') as f:
+    with open('audio1.wav', 'rb') as f:
         print("Sending...")
         l = f.read(4096)
         while (l):

@@ -96,9 +96,9 @@ def pull_metronome() -> str:
     """    bpm = mainwindow.bpm_slider.get()
     t_sig = mainwindow.time_sig_slider.get()
     tot_measures = mainwindow.measures_slider.get()"""
-    bpm = 3
-    t_sig = 6
-    tot_measures = 9
+    bpm = 100
+    t_sig = 4
+    tot_measures = 10
     # bit manipulation
     if bpm < 10:
         bpm = "00"+str(bpm)

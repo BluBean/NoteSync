@@ -56,10 +56,15 @@ def stu_main():
 
         bpm, t_sig, tot_measures = metronome.split(b',')
         print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
+        #deconstruct values
+        bpm = int(bpm)
+        t_sig = int(t_sig)
+        tot_measures = int(tot_measures)
+        print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
 
         #calculate recording length from GUI
-        rec_length = t_sig * (tot_measures / bpm)  # length (unit: seconds)
-        samples = 48000 * 60 * rec_length  # length to record based on GUI (unit: samples)
+        rec_length = t_sig *60* (tot_measures / bpm)  # length (unit: seconds)
+        samples = 48000 * rec_length  # length to record based on GUI (unit: samples)
         offset_size = 48000 * 60 * (t_sig/ bpm)  # samples per measure or known as the amount of samples in an offset
 
         # get and store offset value for student (samples)
