@@ -56,8 +56,7 @@ def stu_main():
 
         bpm, t_sig, tot_measures = metronome.split(b',')
         print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
-        #change bytes to int
-        deconstruct(bpm, t_sig, tot_measures)
+
 
         # get and store offset value for student (samples)
         offset = s.recv(1024)
@@ -89,15 +88,7 @@ while not connected:
     except Exception as e:
         pass #Do nothing, just try again
 """
-##########################################################
-##Deconstruct file variables
-##########################################################
-def deconstruct(bpm, t_sig, tot_measures):
-    bpm = int(bpm)
-    t_sig = int(t_sig)
-    tot_measures = int(tot_measures)
-    print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
-    return bpm,t_sig, tot_measures
+
 
 ###########################################################
 #### Voice recorder MODULE
@@ -112,6 +103,10 @@ def deconstruct(bpm, t_sig, tot_measures):
 
 
 def record(bpm, t_sig,tot_measures, offset, student):
+    bpm = int(bpm)
+    t_sig = int(t_sig)
+    tot_measures = int(tot_measures)
+    print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
     # calculate recording length from GUI
     duration = t_sig * 60 * (tot_measures / bpm)  # length (unit: seconds)
     samples = 48000 * duration  # length to record based on GUI (unit: samples)
