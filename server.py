@@ -3,13 +3,14 @@
 # Imports
 import socket
 import threading
-from _thread import *
-from typing import List
 import json
+import os
+import os.path
 import time
-import numpy as np
 from pydub import AudioSegment
 import soundfile as sf
+
+# double check line 38 when switching between local and ec2
 
 
 # Globals
@@ -19,8 +20,28 @@ T_CONNECTIONS = {}
 S_CONNECTIONS = {}
 T_CONN_LOCK = False
 S_CONN_LOCK = False
-T_METRONOME = b''  # clear param before closing program
-T_OFFSETS = {}     # clear param before closing program
+T_METRONOME = b''
+T_OFFSETS = {}
+
+
+def create_socket(port, t_sec, t_type):
+    '''
+    Create socket for listening.
+    '''
+    # Create TCP socket and set options
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    if t_type == 's':
+        s.settimeout(t_sec)
+
+    # Grab host addr
+    host = socket.gethostname()
+
+    # Bind to port
+    s.bind((host, port))  # ec2 server
+    #s.bind(("127.0.0.1", port))  # local
+
+    return s
 
 
 ###########################################################
@@ -65,7 +86,7 @@ def main():
     global T_CONN_LOCK
 
     # create socket for teacher with timeout (sec)
-    s = create_socket(T_PORT, 10)
+    s = create_socket(T_PORT, 10, 't')
 
     print('Server listening for teacher....')
 
@@ -88,25 +109,36 @@ def main():
         tt.start()  # start thread
 
         # wait to receive global parameter updates from teacher
-        while (T_METRONOME == b'' and T_OFFSETS == {}):
+        while (T_METRONOME == b'' or T_OFFSETS == {}):
             pass
 
         # start student threads
         serve()
         print("finished student serve.")
 
+        # wait until no student connections remain
+        while len(S_CONNECTIONS) > 0:
+            pass
+
+
+##########################
+        ### make sure every students' file has updated successfully before generating final.wav
+
+        # make sure student has uploaded audio1.wav to the server
+        while not os.path.exists('student_1.wav'):
+            pass
+
+
+##########################
+
+        # generate empty wav file
+        f = open('final_mix.wav', "w+")
+        f.close()
 
         #####################################
         #   mix audio files from students   #
         #####################################
 
-
-
-        # wait for first student to connect
-        time.sleep(5)
-        # wait until no student connections remain
-        while len(S_CONNECTIONS) > 0:
-            pass
 
         # send file back to teacher
         print("sending file to teacher")
@@ -120,6 +152,8 @@ def main():
 
         reset_globals()
 
+        exit()
+
 
 # receive metronome and offset data from teacher client
 def t_upload_seq(conn, addr):
@@ -127,12 +161,12 @@ def t_upload_seq(conn, addr):
 
     # Try to receive metronome data (bpm, num_measures, tot_measures)
     metronome = conn.recv(11)
-    #print("metronome: ", metronome)
+    print("debug_metronome: ", metronome)
     T_METRONOME = metronome.decode('utf-8').split(',')
 
     # Try to receive and deserialize offsets dictionary
     offsets = json.loads(conn.recv(1024))
-    #print("offsets: ", offsets)
+    print("debug_offsets: ", offsets)
     T_OFFSETS = offsets
 
     print("Done receiving teacher GUI data")
@@ -153,8 +187,8 @@ def t_download_seq(conn, addr):
     #f = open('final_mix.wav', "w+")
     #f.close()
 
-    # send the recorded file back to server
-    with open('audio1.wav', 'rb') as f:
+    # send the recorded file back to client
+    with open('final_mix.wav', 'rb') as f:
         print("Sending...")
         l = f.read(4096)
         while (l):
@@ -228,25 +262,6 @@ class ServerThread(threading.Thread):
         S_CONN_LOCK = False
 
 
-def create_socket(port, t_sec):
-    '''
-    Create socket for listening.
-    '''
-    # Create TCP socket and set options
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.settimeout(t_sec)
-
-    # Grab host addr
-    host = socket.gethostname()
-
-    # Bind to port
-    #s.bind((host, port))  # ec2 server
-    s.bind(("127.0.0.1", port))  # local
-
-    return s
-
-
 def serve():
     """
     Start socket server
@@ -255,18 +270,18 @@ def serve():
     global T_METRONOME, T_OFFSETS
 
     # create socket for student
-    s = create_socket(S_PORT, 5)
+    s = create_socket(S_PORT, 20, 's')
 
     print('Server listening....')
 
     # store metronome string to send to client
     metronome = encode_metronome(T_METRONOME)
-    #("metronome_serve: ", metronome)
+    print("metronome_serve: ", metronome)
 
     # store offsets in dictionary to send to client
     offsets = T_OFFSETS
     offsets = {int(k): str(v) for k, v in offsets.items()}
-    #print("offsets_serve: ", offsets)
+    print("offsets_serve: ", offsets)
 
     while True:
         s.listen(1)
@@ -297,10 +312,10 @@ def s_download_seq(conn, addr, metronome, offsets):
 
     # Send metronome
     conn.send(bytes(metronome, 'utf-8'))
-    #print('metronome download', bytes(metronome, 'utf-8'))
+    print('metronome download: ', bytes(metronome, 'utf-8'))
     # Send back offset
     conn.send(bytes(offsets[sid], 'utf-8'))
-    #print('offsets download', bytes(offsets[sid], 'utf-8'))
+    print('offsets download: ', bytes(offsets[sid], 'utf-8'))
 
     # Try to receive the WAV
     print("Receiving student wav file...")
@@ -367,7 +382,7 @@ def calc_duration(bpm, beats, num_meas):
     rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
     return data, rate"""
 
-def syncfiles(bpm, beats, num_meas):
+"""def syncfiles(bpm, beats, num_meas):
 
     # print(s1, fs1, s2, fs2)
     data, samplerate,length = int()
@@ -416,7 +431,7 @@ def syncfiles(bpm, beats, num_meas):
     #audio = AudioSegment.from_file('audio1.wav', format="wav")  # open both .wav files to write
     #buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
     #combined = buffer_audio + audio  # audio with buffer appended at beginning
-    #file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file
+    #file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file"""
 
 
 
