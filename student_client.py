@@ -218,7 +218,7 @@ def initialpopup():
     Initialpopup.title("Welcome to NoteSync")
     Initialpopup.iconbitmap("NoteSync_icon.ico")
     Initialpopup.config(background='#5865F2')
-    logo = PhotoImage(file="NoteSync_logo_purp.png")
+    logo = PhotoImage(file="NoteSync_logo.png")
     label1 = Label(Initialpopup, image= logo, bg = "#5865F2")
     label1.pack()
     label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning", bg = "#5865F2")

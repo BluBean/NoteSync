@@ -442,6 +442,11 @@ def mainwindow():
     var = IntVar()
     play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_slider), bg='#99AAB5')
     play.place(x=500, y=90)
+
+    student_amount = Label(mainwindow, text ="Total Students", bg='#99AAB5')
+    student_amount.place(x=10, y=140)
+    S7 = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True, bg='#99AAB5')
+    S7.place(x=98, y=140)
     #play = Button(mainwindow, bd = 0, image = off, command=partial(start_stop, bpm_slider,time_sig_slider)).pack()
     #Opening the maintask window with some random stuff to fil the window
     #two = Label(mainwindow, text ="TBD", bg="green", fg ="black")
