@@ -38,8 +38,8 @@ def create_socket(port, t_sec, t_type):
     host = socket.gethostname()
 
     # Bind to port
-    s.bind((host, port))  # ec2 server
-    #s.bind(("127.0.0.1", port))  # local
+    #s.bind((host, port))  # ec2 server
+    s.bind(("127.0.0.1", port))  # local
 
     return s
 
@@ -138,7 +138,9 @@ def main():
         #####################################
         #   mix audio files from students   #
         #####################################
-
+        #Amount of students needs input from gui
+        amount_students = 2
+        syncfiles(amount_students)
 
         # send file back to teacher
         print("sending file to teacher")
@@ -305,7 +307,7 @@ def serve():
         pass
 
 
-def s_download_seq(conn, addr, metronome, offsets):
+def s_download_seq(conn, addr, metronome, offsets,amount_of_students):
     global S_CONNECTIONS
     # Decide the student number
     sid = int(conn.recv(1).decode())
@@ -331,6 +333,7 @@ def s_download_seq(conn, addr, metronome, offsets):
     print("Done receiving.")
     conn.send(b"Thank you for connecting. Please come again!")
     conn.close()
+
 
 
 # store metronome values in string
@@ -382,23 +385,24 @@ def calc_duration(bpm, beats, num_meas):
     rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
     return data, rate"""
 
-"""def syncfiles(bpm, beats, num_meas):
 
+
+def syncfiles(amount_students):
+    check_student_files(amount_students)
     # print(s1, fs1, s2, fs2)
-    data, samplerate,length = int()
-    num_files =len(s_download_seq.sid)
-    main_file = AudioSegment.from_file("audio"+s_download_seq.sid[0]+".wav", format="wav")
+    data =int()
+    samplerate= int()
+    length = int()
+    main_file = AudioSegment.from_file("mixer0.wav", format="wav")
     boost = main_file + 9  # audio1 x dB louder (clipping)
-    if num_files != 1:
-        for id in s_download_seq.sid:
-            dat,samplerat= sf.read('audio'+id+'.wav')
+    if amount_students != 1:
+        for id in range(1, amount_students-1):
+            dat,samplerat= sf.read("mixer"+id+".wav")
             data[id]=dat
             samplerate[id]=samplerat
-            info = sf.info('audio'+id+'.wav')
+            info = sf.info('mixer'+id+'.wav')
             print('\n', info)
-        if id <= num_files-1:
-            currentval = [id]+1
-            addition_file = AudioSegment.from_file("audio"+currentval+".wav", format="wav")
+            addition_file = AudioSegment.from_file("mixer"+id+".wav", format="wav")
             boost = boost.overlay(addition_file, position=0)  # Overlay audio2 over audio1
     file_handle = boost.export("buffered_overlay.wav", format="wav")
     #audio1 = AudioSegment.from_file("audio2.wav", format="wav")
@@ -432,9 +436,22 @@ def calc_duration(bpm, beats, num_meas):
     #buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
     #combined = buffer_audio + audio  # audio with buffer appended at beginning
     #file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file"""
+############################################
+##Checking to see if we got all the files
+############################################
+def check_student_files(amount_of_students):
+    files_recieved = 0
+    for x in range(0, 9):
+        y= str(x)
+        filename = ("student_"+y+".wav")
+        if os.path.exists(filename):
+            yfiles = str(files_recieved)
+            os.rename(filename, "mixer"+yfiles+".wav")
+            files_recieved = files_recieved + 1
 
-
-
+    if amount_of_students!= files_recieved:
+        print("We did not receive every student's audio file.")
+        exit()
 
 
 
