@@ -375,10 +375,10 @@ def calc_duration(bpm, beats, num_meas):
 
 def sync_files():
     global T_NUM_STUDENTS
-    num_students = T_NUM_STUDENTS
-
+    num_students = int(T_NUM_STUDENTS)
+    print("starting sync")
     # check_student_files(num_students)
-    s_check_received(num_students)
+    s_check_received()
 
     # print(s1, fs1, s2, fs2)
     data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -399,6 +399,7 @@ def sync_files():
             addition_file = AudioSegment.from_file("mixer" + strid + ".wav", format="wav")
             main_file = main_file.overlay(addition_file, position=0)  # Overlay audio2 over audio1
     file_handle = main_file.export("buffered_overlay.wav", format="wav")
+
     #audio1 = AudioSegment.from_file("audio2.wav", format="wav")
     #audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
     #boost1 = audio1 + 9  # audio1 x dB louder (clipping)
@@ -437,16 +438,17 @@ def sync_files():
 ############################################
 
 # Check to see if we got all the files
-def s_check_received(num_students):
+def s_check_received():
+    print("checking files")
     files_received = 0  # initialize
     for stu_id in range(0, 10):
         stu_id_str = str(stu_id)
         filename = 'student_' + stu_id_str + '.wav'
-        while not os.path.exists(filename):
-            pass
-        mix_rename = str(files_received)
-        os.rename(filename, "mixer" + mix_rename + ".wav")
-        files_received = files_received + 1
+        if os.path.exists(filename):
+            mix_rename = str(files_received)
+            os.rename(filename, "mixer" + mix_rename + ".wav")
+            files_received = files_received + 1
+
 
 
 ### main program ###
