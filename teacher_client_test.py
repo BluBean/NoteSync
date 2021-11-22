@@ -37,11 +37,16 @@ def send_GUI_data(ids):
 
     # teacher GUI data
     metronome = pull_metronome()
+    num_students = pull_num_students()
     offsets = pull_offsets(ids)
 
     # Send metronome
     s.send(bytes(metronome, 'utf-8'))
     print("Sent metronome info")
+
+    # Send number of students (0-9)
+    s.send(bytes(num_students, 'utf-8'))
+    print("Sent num_students info")
 
     # Send offsets dictionary
     s.send(json.dumps(offsets, indent=2).encode('utf-8') + b"\n")
@@ -81,7 +86,7 @@ def receive_mix():
 #
 ###########################################################
 
-# pull metronome values; store in a string
+# pull metronome values from GUI; store in a string
 def pull_metronome() -> str:
     """
     Pull values from metronome.
@@ -119,7 +124,15 @@ def pull_metronome() -> str:
     return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
 
 
-# pull student offset values; store in a dictionary
+# pull num_students value from GUI; store in a string
+def pull_num_students() -> str:
+    #returns single digit from 0-9
+
+    return str(2)  # test return
+    #return str(num_students)
+
+
+# pull student offset values from GUI; store in a dictionary
 def pull_offsets(ids: List) -> dict:
     store = {}
     """
@@ -135,7 +148,6 @@ def pull_offsets(ids: List) -> dict:
         #store={"val":mainwindow.s[val].get()}
         store[val] = "1"
     return store
-    #return '1'
 
 
 ### main program ###

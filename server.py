@@ -21,6 +21,7 @@ S_CONNECTIONS = {}
 T_CONN_LOCK = False
 S_CONN_LOCK = False
 T_METRONOME = b''
+T_NUM_STUDENTS = b''
 T_OFFSETS = {}
 
 
@@ -109,8 +110,9 @@ def main():
         tt.start()  # start thread
 
         # wait to receive global parameter updates from teacher
-        while (T_METRONOME == b'' or T_OFFSETS == {}):
+        while (T_METRONOME == b'' or T_NUM_STUDENTS == b'' or T_OFFSETS == {}):
             pass
+        print("Updated global variables")
 
         # start student threads
         serve()
@@ -120,27 +122,7 @@ def main():
         while len(S_CONNECTIONS) > 0:
             pass
 
-
-##########################
-        ### make sure every students' file has updated successfully before generating final.wav
-
-        # make sure student has uploaded audio1.wav to the server
-        while not os.path.exists('student_1.wav'):
-            pass
-
-
-##########################
-
-        # generate empty wav file
-        f = open('final_mix.wav', "w+")
-        f.close()
-
-        #####################################
-        #   mix audio files from students   #
-        #####################################
-        #Amount of students needs input from gui
-        amount_students = 2
-        syncfiles(amount_students)
+        sync_files()  # mixer module
 
         # send file back to teacher
         print("sending file to teacher")
@@ -159,12 +141,17 @@ def main():
 
 # receive metronome and offset data from teacher client
 def t_upload_seq(conn, addr):
-    global T_CONNECTIONS, T_METRONOME, T_OFFSETS
+    global T_CONNECTIONS, T_METRONOME, T_OFFSETS, T_NUM_STUDENTS
 
     # Try to receive metronome data (bpm, num_measures, tot_measures)
     metronome = conn.recv(11)
     print("debug_metronome: ", metronome)
     T_METRONOME = metronome.decode('utf-8').split(',')
+
+    # Try to receive number of students (0-9)
+    num_students = conn.recv(1)
+    print("debug_num_students: ", num_students)
+    T_NUM_STUDENTS = num_students.decode('utf-8')
 
     # Try to receive and deserialize offsets dictionary
     offsets = json.loads(conn.recv(1024))
@@ -186,8 +173,8 @@ def t_download_seq(conn, addr):
 
     ### test ###
     # generate empty wav file
-    #f = open('final_mix.wav', "w+")
-    #f.close()
+    f = open('final_mix.wav', "w+")
+    f.close()
 
     # send the recorded file back to client
     with open('final_mix.wav', 'rb') as f:
@@ -237,7 +224,7 @@ def reset_globals():
 ###########################################################
 
 # allow for threading client connections
-class ServerThread(threading.Thread):
+class StudentThread(threading.Thread):
     def __init__(self, caddr, cconn, metronome, offsets):
         threading.Thread.__init__(self)
         self.caddr = caddr
@@ -292,7 +279,7 @@ def serve():
             conn, addr = s.accept()
         except socket.timeout:  # stop listening after timeout (sec)
             break
-        st = ServerThread(addr, conn, metronome, offsets)
+        st = StudentThread(addr, conn, metronome, offsets)
 
         # make sure threads don't mess with each other
         while S_CONN_LOCK:
@@ -307,7 +294,7 @@ def serve():
         pass
 
 
-def s_download_seq(conn, addr, metronome, offsets,amount_of_students):
+def s_download_seq(conn, addr, metronome, offsets):
     global S_CONNECTIONS
     # Decide the student number
     sid = int(conn.recv(1).decode())
@@ -333,7 +320,6 @@ def s_download_seq(conn, addr, metronome, offsets,amount_of_students):
     print("Done receiving.")
     conn.send(b"Thank you for connecting. Please come again!")
     conn.close()
-
 
 
 # store metronome values in string
@@ -387,16 +373,20 @@ def calc_duration(bpm, beats, num_meas):
 
 
 
-def syncfiles(amount_students):
-    check_student_files(amount_students)
+def sync_files():
+    global T_NUM_STUDENTS
+    num_students = T_NUM_STUDENTS
+
+    #check_student_files(num_students)
+    s_check_received(num_students)
     # print(s1, fs1, s2, fs2)
     data =int()
     samplerate= int()
     length = int()
     main_file = AudioSegment.from_file("mixer0.wav", format="wav")
     boost = main_file + 9  # audio1 x dB louder (clipping)
-    if amount_students != 1:
-        for id in range(1, amount_students-1):
+    if num_students != 1:
+        for id in range(1, num_students-1):
             dat,samplerat= sf.read("mixer"+id+".wav")
             data[id]=dat
             samplerate[id]=samplerat
@@ -436,23 +426,23 @@ def syncfiles(amount_students):
     #buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
     #combined = buffer_audio + audio  # audio with buffer appended at beginning
     #file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file"""
+
+
 ############################################
 ##Checking to see if we got all the files
 ############################################
-def check_student_files(amount_of_students):
-    files_recieved = 0
-    for x in range(0, 9):
-        y= str(x)
-        filename = ("student_"+y+".wav")
-        if os.path.exists(filename):
-            yfiles = str(files_recieved)
-            os.rename(filename, "mixer"+yfiles+".wav")
-            files_recieved = files_recieved + 1
 
-    if amount_of_students!= files_recieved:
-        print("We did not receive every student's audio file.")
-        exit()
-
+# Check to see if we got all the files
+def s_check_received(num_students):
+    files_received = 0  # initialize
+    for stu_id in range(0, num_students+1):
+        stu_id_str = str(stu_id)
+        filename = 'student_' + stu_id_str + '.wav'
+        while not os.path.exists(filename):
+            pass
+        mix_rename = str(files_received)
+        os.rename(filename, "mixer" + mix_rename + ".wav")
+        files_received = files_received + 1
 
 
 ### main program ###
