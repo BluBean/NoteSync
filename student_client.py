@@ -188,14 +188,14 @@ def initialpopup():
     Initialpopup = Tk()
     Initialpopup.title("Welcome to NoteSync")
     Initialpopup.iconbitmap("NoteSync_icon.ico")
-    Initialpopup.config(background='#5865F2')
-    logo = PhotoImage(file="NoteSync_logo.png")
-    label1 = Label(Initialpopup, image= logo, bg = "#5865F2")
+    Initialpopup.config(background='#bca76a')
+    logo = PhotoImage(file="NoteSync_Gold.png")
+    label1 = Label(Initialpopup, image= logo, bg = "#bca76a")
     label1.pack()
-    label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning", bg = "#5865F2")
+    label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning", bg = "#bca76a")
     label2.pack()
     #button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
-    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy, bg = "#F6F6F6")
+    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy, bg = "#bca76a")
     button1.pack()
     #button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
     #button2.pack()
@@ -207,9 +207,9 @@ def authors():
     authors_name.iconbitmap("NoteSync_icon.ico")
     authors_name.geometry("700x100")
     authors_name.config(background='#5865F2')
-    authors_label = Label(authors_name, text ="Notesync created by: Alec Dorn, Brandon Buccola, David Pivonka, Lance McKay, and Michael Moreno", bg = "#5865F2")
+    authors_label = Label(authors_name, text ="Notesync created by: Alec Dorn, Brandon Buccola, David Pivonka, Lance McKay, and Michael Moreno", bg = "#bca76a")
     authors_label.pack()
-    mentor_label = Label(authors_name, text ="Program Mentor: Shamala Chickamenahalli", bg = "#5865F2")
+    mentor_label = Label(authors_name, text ="Program Mentor: Shamala Chickamenahalli", bg = "#bca76a")
     mentor_label.pack()
     authors = Button(authors_name, text="OK", command=authors_name.destroy, bg = "#FFFFFF")
     authors.pack()
@@ -274,7 +274,7 @@ class mainwindow:
         mainwindow.iconbitmap("NoteSync_icon.ico")
         mainwindow.geometry("300x200")
         main_menu = Menu(mainwindow)
-        mainwindow.config(background='#5865F2')
+        mainwindow.config(background='#bca76a')
         mainwindow.config(menu=main_menu)
 
         #create new menu options
@@ -294,14 +294,14 @@ class mainwindow:
         ipadd= '127.0.0.1'
         #filename = 'audio2.wav'
         current_value = '0'
-        student_label = Label(mainwindow, text ="Student number select", font=("32"), bg = "#5865F2")
-        student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"), bg = "#5865F2")
+        student_label = Label(mainwindow, text ="Student number select", font=("32"), bg = "#bca76a")
+        student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"), bg = "#bca76a")
 
         Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#F6F6F6")
         global metrostatus
         metrostatus = IntVar()
 
-        metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg="#5865F2", textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
+        metro_display = Label(mainwindow, width=2, font=("Arial", 45), bg = "#bca76a", textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
 
         self.metro_display = metro_display
 
