@@ -128,7 +128,7 @@ def pull_metronome() -> str:
 def pull_num_students() -> str:
     #returns single digit from 0-9
 
-    return str(2)  # test return
+    return str(1)  # test return
     #return str(num_students)
 
 

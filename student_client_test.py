@@ -62,7 +62,7 @@ def stu_main():
         print('offset: ', offset)
 
         # record and save recording
-        #record(bpm, t_sig, tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
+        record(bpm, t_sig, tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
         l = f.read(4096)

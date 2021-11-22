@@ -1,93 +1,57 @@
-import os, socket, sys
-
-
-import sounddevice as sd
-import soundfile as sf
-from inspect import signature
-
+import socket
 #imports for GUI module
 from tkinter import *
 from tkinter import filedialog
 from functools import partial
-from PIL import ImageTk as itk, Image
 import threading
 from playsound import playsound
 import os
 import sys
 import sounddevice as sd
-from scipy.io.wavfile import write
 ###################################
 ###Imports for DSP module
-import numpy as np
-from pydub import AudioSegment
 import soundfile as sf
-from sys import argv
 ## Import for metronome
 import time
 
-
+# Globals
+s = socket.socket()  # Create a socket object
+S_PORT = 60002  # Reserve a port for your service.
 
 
 ##########################################################
 #### Student Client Connection
 #
 ###########################################################
+def stu_main(student, host, file):
 
-def main(student, host, file):
-    sig = signature(main)
-    params = sig.parameters
-    s = socket.socket()  # Create a socket object
-    # student = sys.argv[1]
-    # host = sys.argv[2]
-    # file = sys.argv[3]
-    S_PORT = 60002  # Reserve a port for your service.
-
-
-
-
-    ### main client program ###
-    if len(params) != 3:
-        print("Syntax: python3 TestClient.py <student number> <host> <wav file>")
-        sys.exit(0)
-   # print ('checkpoint 1')
-    # add check to verify file exists or quit
-    if not os.path.exists(file):
-        print(file + " does not exist. Exiting.")
-        sys.exit(0)
-    #print('checkpoint 2')
-   #if int(student) > 9 or int(student) < 0:
-   #     print("Student number is invalid. Valid student numbers are 0-9.")
-   #     sys.exit(0)
+    # check for user input errors
+    verify_inputs(file)
 
     # send the recorded file back to server
-    with open(file, 'rb') as f:
+    with open (file,'rb') as f:
         # Send student number, get offset
         s.connect((host, S_PORT))
         s.send(str.encode(student))
         print("Sending student ID", student)
-        print(str.encode(student))
 
-        offset = s.recv(1024)  # get and store offset value for student (samples)
-        #print(offset)
-        metronome = s.recv(1024)  # get and store metronome values in a list (bpm, num_measures, tot_measures)
-        print(metronome)
+        # get and store metronome values in a list (bpm, num_measures, tot_measures)
+        metronome = s.recv(11)
+        print('metronome: ', metronome)
+
         bpm, t_sig, tot_measures = metronome.split(b',')
-        print('bpm: ', bpm, 'time_sig: ', t_sig, 'tot_measures: ', tot_measures)
-        #deconstruct values
-        bpm = int(bpm)
-        t_sig = int(t_sig)
-        tot_measures = int(tot_measures)
         print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
 
-        #calculate recording length from GUI
-        rec_length = t_sig *60* (tot_measures / bpm)  # length (unit: seconds)
-        samples = 48000 * rec_length  # length to record based on GUI (unit: samples)
-        offset_size_sec =60 * (t_sig/ bpm) #time per measure in seconds, so seconds per measure
-        offset_size = 48000 * 60 * (t_sig/ bpm)  # samples per measure or known as the amount of samples in an offset
+        # get and store offset value for student (samples)
+        offset = s.recv(1024)
+        print('offset: ', offset)
+
+        #change values to integers
+        bpm, t_sig, tot_measures, offset = set_values(bpm,t_sig, tot_measures, offset)
 
         # record and save recording
         backgroundmetro(metronome, bpm, t_sig)
-        record(samples,offset_size_sec, offset,student)  # (<duration of recording>,<offset_size>, <offset>, <student#>) (samples)
+        record(bpm, t_sig, tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
         l = f.read(4096)
@@ -98,27 +62,19 @@ def main(student, host, file):
     print("Done Sending")
     s.shutdown(socket.SHUT_WR)
     print(s.recv(1024))
+    print("Goodnight, sweet prince.")
     s.close()
-
-
-    """
-    # keep trying to connect until connected to server
-    connected = False
-    while not connected:
-        try:
-            s.connect((host, S_PORT))
-            connected = True
-        except Exception as e:
-            pass #Do nothing, just try again
-    """
-
-    ### terminal command (python3 <file> <student#> <AWS ip> <audio#.wav file>)
-    # python3 client.py 1 18.220.239.193 audio1.wav
-
-
-"""if __name__=='__main__':
-    sys.exit(main(sys.argv[1], sys.argv[2]))"""
-
+# add check to verify file exists or quit
+def verify_inputs(file):
+    if not os.path.exists(file):
+        print(file + " does not exist. Exiting.")
+        sys.exit(0)
+def set_values(bpm, t_sig, tot_measures, offset):
+    bpm = int(bpm)
+    t_sig = int(t_sig)
+    tot_measures = int(tot_measures)
+    offset = int(offset)
+    return bpm, t_sig, tot_measures, offset
 
 ###########################################################
 #### Voice recorder MODULE
@@ -130,21 +86,33 @@ def main(student, host, file):
 # --- output ---
 # write to .wav file
 ###########################################################
-def record(rec_samples,offset_size, offset, student):
+def record(bpm, t_sig, tot_measures, offset, student):
+    offset_size =60 * (t_sig / bpm)
+    global red, blue, yellow, gnomestatus
     delay_display = (offset_size * offset)
-    threading.timer(delay_display,mainwindow.metro_display.configure(bg='red') ).start()
-    # print('checkpoint recorder')
-    #mainwindow.metro_display.configure(bg='red')
+    print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
+    # calculate recording length from GUI
+    duration = t_sig * 60 * (tot_measures / bpm)  # length (unit: seconds)
+    samples = 48000 * duration  # length to record based on GUI (unit: samples)
+    offset_size = 48000 * 60 * (t_sig / bpm)  # samples per measure or known as the amount of samples in an offset
     fs = 48000  # Sample rate
-    duration = rec_samples  # Duration of recording (samples)
     print('offset (samples): ', offset)
     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-    myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
+    #threading.timer(delay_display,mainwindow.metro_display.configure(bg='red') ).start()
+    red = True
+    blue = False
+    yellow = False
+    mainwindow.change_color(mainwindow)  #changing color to red
+    myrecording = sd.rec(int(samples), samplerate=fs, channels=2)
     sd.wait()  # Wait until recording is finished
     # write('input1.wav', fs, myrecording)  # Save as WAV file
     sf.write('audio' + student + '.wav', myrecording, fs, subtype='PCM_16')
     print('voice recording saved')
-    mainwindow.metro_display.configure(bg='blue')
+    gnomestatus = False
+    red = False
+    blue = True
+    yellow = False
+    mainwindow.change_color(mainwindow)  #changes color to blue
 
 ###########################################################
 #### Client MODULE
@@ -167,6 +135,7 @@ def metronome(bpm, tsig):
     sleep = 60.0 / bpm
     counter = 0
     metrovalue = 0
+    print("I'm in the metronome")
     while gnomestatus: # =True:
         counter += 1
         if counter % tsig:
@@ -177,38 +146,40 @@ def metronome(bpm, tsig):
         else:
             print(f'TICK')
             playsound('Tick.wav', False)
-            metrovalue = tsig
+            metrovalue=tsig
             metrostatus.set(metrovalue)
-            time.sleep(sleep)
-            mainwindow.after(1,start_stop(bpm, tsig))
+            metrovalue=0
 
         time.sleep(sleep)
-
+    if gnomestatus:
+        background(metronome, bpm, tsig)
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
 
 def backgroundmetro(func, bpm, tsig):
-    global metrostatus
+    global red, blue, yellow, gnomestatus
+    red = False
+    blue = False
+    yellow = True
+    mainwindow.change_color(mainwindow)
     metrovalue = 0
     sleep = 60.0 / bpm
-    counter = 0
-    counter += 1
-    if counter % tsig:
+    while metrovalue != tsig:
         print(f'tock')
         playsound('tock.wav', False)
         metrovalue = metrovalue + 1
         metrostatus.set(metrovalue)
-    else:
-        print(f'TICK')
-        playsound('Tick.wav', False)
-        metrovalue = tsig
-        metrostatus.set(metrovalue)
         time.sleep(sleep)
-    background(func, bpm, tsig)
 
-    # run metronome tool with given values
-    #metronome(bpm, tsig)
+    print(f'TICK')
+    playsound('Tick.wav', False)
+    metrostatus.set(metrovalue)
+    time.sleep(sleep)
+    gnomestatus = True
+    print("I called the metronome")
+    background(metronome, bpm, tsig)
+
 #############################
 #Gui module
 #############################
@@ -293,78 +264,64 @@ def runClient(student ,ipadd):
     filename = 'audio' + stu + '.wav'
     f = open(filename, "w+")
     f.close()
+    stu_main(stu, ipadd, filename)
 
-    main(stu, ipadd, filename)
+class mainwindow:
+    def __init__(self):
+        global metro_display
+        mainwindow = Tk()
+        mainwindow.title("NoteSync")
+        mainwindow.iconbitmap("NoteSync_icon.ico")
+        mainwindow.geometry("300x200")
+        main_menu = Menu(mainwindow)
+        mainwindow.config(background='#5865F2')
+        mainwindow.config(menu=main_menu)
 
-def start_stop(bpm, beats):
-    global gnomestatus
-    if mainwindow.var.get()== 1:
-        gnomestatus = True
-        metronome(bpm, beats)
-    else:
-        gnomestatus = False
-        metronome(bpm, beats)
-#button to start other modules
-def recorderlaunch(bpm, t_sig, tot_meas):
-    print('Recording in progress')
-    rec_length = t_sig * (tot_meas / bpm) #length in seconds
-    samples = 48000 * 60 * rec_length  #length to record based on GUI (samples)
-    offset_size = 48000 * 60 * (t_sig/bpm)  # samples per measure or known as the amount of samples in an offset
-    main.record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
+        #create new menu options
 
-def mainwindow():
-    mainwindow = Tk()
-    mainwindow.title("NoteSync")
-    mainwindow.iconbitmap("NoteSync_icon.ico")
-    mainwindow.geometry("300x200")
-    main_menu = Menu(mainwindow)
-    mainwindow.config(background='#5865F2')
-    mainwindow.config(menu=main_menu)
+        file_menu = Menu(main_menu)
+        # Dropdown menu at the top of GUI
+        main_menu.add_cascade(label="Options",menu=file_menu)
+        #file_menu.add_command(label="New...", command=new_command)
+        #file_menu.add_command(label="Save Location", command=save_command)
+        file_menu.add_command(label="Help", command=help)
+        file_menu.add_command(label="Authors", command=authors)
+        file_menu.add_command(label="Exit", command=mainwindow.quit)
 
+        # Button to activate 'TestClient.py'
+        #student = '2'
+        #ipadd = '18.220.239.193'
+        ipadd= '127.0.0.1'
+        #filename = 'audio2.wav'
+        current_value = '0'
+        student_label = Label(mainwindow, text ="Student number select", font=("32"), bg = "#5865F2")
+        student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"), bg = "#5865F2")
 
+        Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#F6F6F6")
+        global metrostatus
+        metrostatus = IntVar()
 
-    #create new menu options
+        metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg="#5865F2", textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
 
-    file_menu = Menu(main_menu)
-    # Dropdown menu at the top of GUI
-    main_menu.add_cascade(label="Options",menu=file_menu)
-    #file_menu.add_command(label="New...", command=new_command)
-    #file_menu.add_command(label="Save Location", command=save_command)
-    file_menu.add_command(label="Help", command=help)
-    file_menu.add_command(label="Authors", command=authors)
-    file_menu.add_command(label="Exit", command=mainwindow.quit)
+        self.metro_display = metro_display
 
-    # Button to activate 'TestClient.py'
-    #student = '2'
-    #ipadd = '18.220.239.193'
-    ipadd= '127.0.0.1'
-    #filename = 'audio2.wav'
-    current_value = '0'
-    student_label = Label(mainwindow, text ="Student number select", font=("32"), bg = "#5865F2")
-    student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"), bg = "#5865F2")
+        var = IntVar()
+        student_label.pack()
+        student_spin.pack()
+        Clybutton.pack()
+        metro_display.pack()
 
-    Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#F6F6F6")
-    global metrostatus
-    metrostatus = IntVar()
+        mainwindow.mainloop()
 
-    metro_display = Label(mainwindow, width=2, font=("Arial", 45),bg="#5865F2", textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
+    # change display for metronome*******needs to be in mainwindow, please do not move****
+    def change_color(self):
+        if red:
+            metro_display.configure(bg='red')
+        if blue:
+            metro_display.configure(bg='blue')
+        if yellow:
+            metro_display.configure(bg='yellow')
 
-    #metrostatus.set(0)
-
-    #metro_display.configure(state='disabled')
-
-    var = IntVar()
-    bpm = 100
-    time_sig = 8
-    play = Checkbutton(mainwindow,variable=var, command=partial(backgroundmetro,start_stop, bpm,time_sig))
-    #play.pack() #uncomment this line to test metronome
-
-    student_label.pack()
-    student_spin.pack()
-    Clybutton.pack()
-    metro_display.pack()
-
-    mainwindow.mainloop()
 initialpopup()
 mainwindow()
 

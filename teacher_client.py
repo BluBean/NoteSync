@@ -147,44 +147,7 @@ class dsp:
         rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
         return data, rate
 
-    def syncfiles(bpm, beats, num_meas):
 
-        s1, fs1 = sf.read('audio1.wav')  # get data, samplerate
-        info1 = sf.info('audio1.wav')
-        # bits1 = sf.samplerate('audio1.wav')
-        print(info1)
-
-        s2, fs2 = sf.read('audio2.wav')
-        info2 = sf.info('audio2.wav')
-        # bits2 = sf.samplerate('audio2.wav')
-        print('\n', info2)
-        # print(s1, fs1, s2, fs2)
-
-        # e = s1-s2 # difference signal
-        l1 = len(s1)  # total number of samples
-        l2 = len(s2)
-        print(l1, l2)
-        max_samples = max(l1, l2)  # file with greatest number of samples
-        min_samples = min(l1, l2)
-        samples_offset = abs(max_samples - min_samples)
-        print(samples_offset)
-
-        # add buffer to beginning of shorter audio file
-        buffer = np.zeros(samples_offset)  # generate buffer
-        # print(buffer)
-
-        sf.write('buffer.wav', buffer, 48000)  # create buffer .wav file
-        audio = AudioSegment.from_file('audio1.wav', format="wav")  # open both .wav files to write
-        buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
-        combined = buffer_audio + audio  # audio with buffer appended at beginning
-        file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file
-
-        audio1 = AudioSegment.from_file("audio2.wav", format="wav")
-        audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
-        boost1 = audio1 + 9  # audio1 x dB louder (clipping)
-        overlay = boost1.overlay(audio2, position=0)  # Overlay audio2 over audio1
-        file_handle = overlay.export("buffered_overlay.wav", format="wav")  # export overlaid wav files
-        dsp.testvariables(bpm, beats, num_meas)
 
 ###########################################################
 #### Voice recorder MODULE
@@ -428,8 +391,8 @@ def mainwindow():
     #record_button.place(x=500, y=10)
     start_server = Button(mainwindow, text='Open Server',command= serverlaunch, bg='#F6F6F6') #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
     start_server.place(x=500, y=150)
-    sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider), bg='#F6F6F6')
-    sync_files.place(x=525, y=50)
+    #sync_files=Button(mainwindow, text='Sync Files', command=partial(DSPlaunch, bpm_slider,time_sig_slider,measures_slider), bg='#F6F6F6')
+    #sync_files.place(x=525, y=50)
     send_data = Button(mainwindow, text='Send Data',command= sendit, bg='#F6F6F6') #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
     send_data.place(x=600, y=150)
     # global play
