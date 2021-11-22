@@ -377,25 +377,28 @@ def sync_files():
     global T_NUM_STUDENTS
     num_students = T_NUM_STUDENTS
 
-    #check_student_files(num_students)
+    # check_student_files(num_students)
     s_check_received(num_students)
 
     # print(s1, fs1, s2, fs2)
-    data =int()
-    samplerate= int()
-    length = int()
+    data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    samplerate = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    data = [None] * len(data)
+    samplerate = [None] * len(samplerate)
+    length = []
     main_file = AudioSegment.from_file("mixer0.wav", format="wav")
-    boost = main_file + 9  # audio1 x dB louder (clipping)
+
     if num_students != 1:
-        for id in range(1, num_students-1):
-            dat,samplerat= sf.read("mixer"+id+".wav")
-            data[id]=dat
-            samplerate[id]=samplerat
-            info = sf.info('mixer'+id+'.wav')
+        for id in range(1, num_students):
+            strid = str(id)
+            dat, samplerat = sf.read("mixer" + strid + ".wav")
+            data[id] = dat
+            samplerate[id] = samplerat
+            info = sf.info('mixer' + strid + '.wav')
             print('\n', info)
-            addition_file = AudioSegment.from_file("mixer"+id+".wav", format="wav")
-            boost = boost.overlay(addition_file, position=0)  # Overlay audio2 over audio1
-    file_handle = boost.export("buffered_overlay.wav", format="wav")
+            addition_file = AudioSegment.from_file("mixer" + strid + ".wav", format="wav")
+            main_file = main_file.overlay(addition_file, position=0)  # Overlay audio2 over audio1
+    file_handle = main_file.export("buffered_overlay.wav", format="wav")
     #audio1 = AudioSegment.from_file("audio2.wav", format="wav")
     #audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
     #boost1 = audio1 + 9  # audio1 x dB louder (clipping)
@@ -436,7 +439,7 @@ def sync_files():
 # Check to see if we got all the files
 def s_check_received(num_students):
     files_received = 0  # initialize
-    for stu_id in range(0, num_students+1):
+    for stu_id in range(0, 10):
         stu_id_str = str(stu_id)
         filename = 'student_' + stu_id_str + '.wav'
         while not os.path.exists(filename):
