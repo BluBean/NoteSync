@@ -379,6 +379,7 @@ def sync_files():
 
     #check_student_files(num_students)
     s_check_received(num_students)
+
     # print(s1, fs1, s2, fs2)
     data =int()
     samplerate= int()
