@@ -21,8 +21,8 @@ import time
 
 # Globals
 s = socket.socket()      # Create a socket object
-#HOST = '18.220.239.193'  # ec2 server
-HOST = '127.0.0.1'       # local host
+HOST = '18.220.239.193'  # ec2 server
+#HOST = '127.0.0.1'       # local host
 T_PORT = 60003           # Reserve a port for your service.
 
 
@@ -207,16 +207,17 @@ def metronome(bpm, tsig):
     counter = 0
     while gnomestatus: # =True:
         counter += 1
-        if counter % tsig:
+        if counter % int(tsig):
             print(f'tock')
             playsound('tock.wav', False)
         else:
             print(f'TICK')
             playsound('Tick.wav', False)
             time.sleep(sleep)
-            mainwindow.after(1,start_stop(mainwindow.bpm_slider, mainwindow.time_sig_slider))
+            #mainwindow.after(1,start_stop(mainwindow.bpm_slider, mainwindow.time_sig_slider))
         time.sleep(sleep)
-
+    if gnomestatus:
+        background(metronome, bpm_slider, time_sig_top.get())
 
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
@@ -318,6 +319,7 @@ def help():
 
 def start_stop(bpm, beats):
     global gnomestatus
+
     if var.get()== 1:
         gnomestatus = True
         metronome(bpm.get(), beats.get())
@@ -455,10 +457,6 @@ def mainwindow():
     #three.pack(side=LEFT, fill=Y)
 
     mainwindow.mainloop()
-
-
-
-
 
 initialpopup()
 mainwindow()
