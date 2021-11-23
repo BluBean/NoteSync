@@ -40,8 +40,8 @@ def create_socket(port, t_sec, t_type):
     host = socket.gethostname()
 
     # Bind to port
-    #s.bind((host, port))  # ec2 server
-    s.bind(("127.0.0.1", port))  # local
+    s.bind((host, port))  # ec2 server
+    #s.bind(("127.0.0.1", port))  # local
 
     return s
 
@@ -123,16 +123,15 @@ def main():
         while len(S_CONNECTIONS) > 0:
             pass
 
-        sync_files()  # mixer module
+        # mixer module
+        sync_files()
 
         # send file back to teacher
         print("sending file to teacher")
         t_download_seq(conn, addr)
 
-
-        ################################
-        #   close teacher connections  #
-        ################################
+        print('remove WAV files from server')
+        clear_wav()
 
         print('reset globals')
         reset_globals()
@@ -198,6 +197,18 @@ def decode_metronome(metronome) -> int:
     tot_measures = int(tot_measures)
     #print('bpm:', bpm, ' t_sig:', t_sig, ' tot_measures:', tot_measures)
     return bpm, t_sig, tot_measures
+
+
+def clear_wav():
+    stored_wav = range(0,10)
+    for index in stored_wav:
+        if os.path.exists("mixer" + str(index) + ".wav"):
+            os.remove("mixer" + str(index) + ".wav")
+            print("removed mixer" + str(index) + ".wav")
+
+    if os.path.exists("final_mix.wav"):
+        os.remove("final_mix.wav")
+        print("removed final_mix.wav")
 
 
 def reset_globals():
@@ -371,39 +382,6 @@ def sync_files():
             main_file = main_file.overlay(addition_file, position=0)  # Overlay audio2 over audio1
             os.remove("mixer" + strid + ".wav")
     file_handle = main_file.export("final_mix.wav", format="wav")
-    os.remove("mixer0.wav")
-
-    #audio1 = AudioSegment.from_file("audio2.wav", format="wav")
-    #audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
-    #boost1 = audio1 + 9  # audio1 x dB louder (clipping)
-    #overlay = boost1.overlay(audio2, position=0)  # Overlay audio2 over audio1
-      # export overlaid wav files
-    #for id in range(num_itterations):
-        #length[id] = len(samplerate[id]) # total number of samples
-        #length[id+1] = len(samplerate[id+1])
-        #print(length[id],length[id+1])
-        #max_samples = max(length[id],length[id+1])  # file with greatest number of samples
-        #min_samples = min(length[id],length[id+1])
-        #samples_offset = abs(max_samples - min_samples)
-        #print(samples_offset)
-    # e = s1-s2 # difference signal
-    #l1 = len(s1)  # total number of samples
-    #l2 = len(s2)
-    #print(l1, l2)
-    #max_samples = max(l1, l2)  # file with greatest number of samples
-    #min_samples = min(l1, l2)
-    #samples_offset = abs(max_samples - min_samples)
-    #print(samples_offset)
-
-    # add buffer to beginning of shorter audio file
-    #buffer = np.zeros(samples_offset)  # generate buffer
-    # print(buffer)
-
-    #sf.write('buffer.wav', buffer, 48000)  # create buffer .wav file
-    #audio = AudioSegment.from_file('audio1.wav', format="wav")  # open both .wav files to write
-    #buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
-    #combined = buffer_audio + audio  # audio with buffer appended at beginning
-    #file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file"""
 
 
 # Check to see if we got all the files
