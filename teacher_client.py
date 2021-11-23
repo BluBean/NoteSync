@@ -345,7 +345,7 @@ def mainwindow():
     #BPM and time signature slider scale
     bpm_label = Label(mainwindow, text ="BPM", bg='#99AAB5')#, bg="red", fg ="gray")
     bpm_label.place(x=300, y=10)
-    bpm_slider = Scale(mainwindow, from_=1, to=200, orient=HORIZONTAL, bg='#99AAB5') #, tickinterval=100,orient=HORIZONTAL)
+    bpm_slider = Scale(mainwindow, from_=1, to=200, width=10, orient=HORIZONTAL, bg='#99AAB5') #, tickinterval=100,orient=HORIZONTAL)
     bpm_slider.set(100)
     bpm_slider.place(x=360, y=10)
     time_sig_label = Label(mainwindow, text ="Time Signature", bg='#99AAB5')#, bg="red", fg ="gray")
@@ -358,7 +358,7 @@ def mainwindow():
     time_sig_bottom.place(x=360, y=110)
     measures_label = Label(mainwindow, text ="Total Measures", bg='#99AAB5')#, bg="red", fg ="gray")
     measures_label.place(x=250, y =140)
-    measures_slider = Scale(mainwindow, from_=1, to=80,orient=HORIZONTAL, bg='#99AAB5')
+    measures_slider = Scale(mainwindow, from_=1, to=80, width=10, orient=HORIZONTAL, bg='#99AAB5')
     measures_slider.place(x=360, y=150)
     # Student Information Section
     Delay_title = Label(mainwindow, text = "Select Student Information: ", font="helvetica 11", bg='#99AAB5')
