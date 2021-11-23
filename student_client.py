@@ -195,7 +195,7 @@ def initialpopup():
     label2 = Label(Initialpopup, text ="Audio Synchronization Tool for Remote Learning", bg = "#bca76a")
     label2.pack()
     #button1 = Button(Initialpopup, text="Get Started!", command = startrecording)
-    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy, bg = "#bca76a")
+    button1 = Button(Initialpopup, text="Get Started!",command=Initialpopup.destroy, bg = "#F6F6F6")
     button1.pack()
     #button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
     #button2.pack()
