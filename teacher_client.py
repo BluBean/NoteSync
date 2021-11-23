@@ -53,6 +53,10 @@ def send_GUI_data(ids):
     num_students = pull_num_students()
     offsets = pull_offsets(ids)
 
+    print(num_students)
+    print(metronome)
+    print(offsets)
+
     # Send metronome
     s.send(bytes(metronome, 'utf-8'))
     print("Sent metronome info")
@@ -111,13 +115,10 @@ def pull_metronome() -> str:
 
     return as a string to send to server
     """
-    # test values
-    bpm = mainwindow.bpm_slider.get()
-    t_sig = mainwindow.time_sig_top.get()
-    tot_measures = mainwindow.measures_slider.get()
-    #bpm = 72
-    #t_sig = 4
-    #tot_measures = 4
+    bpm = int(bpm_slider.get())
+    t_sig = int(time_sig_top.get())
+    tot_measures = int(measures_slider.get())
+
     # bit manipulation
     if bpm < 10:
         bpm = "00"+str(bpm)
@@ -132,7 +133,7 @@ def pull_metronome() -> str:
     else:
         tot_measures= "0"+str(tot_measures)
 
-    #print(str(bpm) + "," + str(t_sig) + "," + str(tot_measures))
+    print(str(bpm) + "," + str(t_sig) + "," + str(tot_measures))
 
     return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
 
@@ -140,8 +141,8 @@ def pull_metronome() -> str:
 # pull num_students value from GUI; store in a string
 def pull_num_students() -> str:
     #returns single digit from 0-9
-
-    return str(1)  # test return
+    student_number = int(ST.get())
+    return str(student_number)  # test return
     #return str(num_students)
 
 
@@ -151,15 +152,19 @@ def pull_offsets(ids: List) -> dict:
     """
     Pull values from offset table.
     Store offset as string in dictionary (samples or measures)
-
     ids : student IDs
-
     return as a dictionary to send to server
     """
-
-    for val in ids:
-        #store={"val":mainwindow.s[val].get()}
-        store[val] = "1"
+    store[0] = S0.get()
+    store[1] = S1.get()
+    store[2] = S2.get()
+    store[3] = S3.get()
+    store[4] = S4.get()
+    store[5] = S5.get()
+    store[6] = S6.get()
+    store[7] = S7.get()
+    store[8] = S8.get()
+    store[9] = S9.get()
     return store
 
 
@@ -322,6 +327,9 @@ def start_stop(bpm, beats):
 
 
 def mainwindow():
+    global  bpm_slider, time_sig_top, measures_slider, ST
+    global S0,S1, S2, S3, S4, S5, S6, S7, S8, S9
+
     mainwindow = Tk()
     mainwindow.title("NoteSync")
     mainwindow.iconbitmap("NoteSync_icon.ico")
@@ -439,7 +447,6 @@ def mainwindow():
     play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_top), bg='#99AAB5')
     play.place(x=270, y=270)
 
-
     #play = Button(mainwindow, bd = 0, image = off, command=partial(start_stop, bpm_slider,time_sig_slider)).pack()
     #Opening the maintask window with some random stuff to fil the window
     #two = Label(mainwindow, text ="TBD", bg="green", fg ="black")
@@ -448,6 +455,9 @@ def mainwindow():
     #three.pack(side=LEFT, fill=Y)
 
     mainwindow.mainloop()
+
+
+
 
 
 initialpopup()
