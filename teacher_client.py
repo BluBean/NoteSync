@@ -36,12 +36,14 @@ def conn_server():
     s.connect((HOST, T_PORT))
     print("Connected.")
 
+
 # close connection to server
 def close_conn():
     print("Done Sending")
     s.shutdown(socket.SHUT_WR)
     print("Goodbye.")
     s.close()
+
 
 # send teacher GUI data to server
 def send_GUI_data(ids):
@@ -67,6 +69,7 @@ def send_GUI_data(ids):
 
     return
 
+
 # receive final mix as WAV
 def receive_mix():
 
@@ -89,7 +92,6 @@ def receive_mix():
     s.send(b"sick mixtape G")
     print("close conn at receive_mix.")
     s.close()
-
 
 
 ###########################################################
@@ -133,6 +135,7 @@ def pull_metronome() -> str:
     #print(str(bpm) + "," + str(t_sig) + "," + str(tot_measures))
 
     return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
+
 
 # pull num_students value from GUI; store in a string
 def pull_num_students() -> str:
@@ -183,6 +186,7 @@ def teacher_main():
     # try to receive wav
     receive_mix()
 
+
 #############################
 # Metronome module
 #############################
@@ -190,7 +194,6 @@ def teacher_main():
     # Collect beats per minute and time signature from user
   #  bpm = int(input("Enter bpm value: "))
   #  tsig = int(input("Enter bpb value: "))
-
 
     # define metronome tool
 def metronome(bpm, tsig):
@@ -209,9 +212,12 @@ def metronome(bpm, tsig):
             mainwindow.after(1,start_stop(mainwindow.bpm_slider, mainwindow.time_sig_slider))
         time.sleep(sleep)
 
+
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
+
+
 def run_background(func):
     t = threading.Thread(target=func)
     t.start()
@@ -220,7 +226,6 @@ def run_background(func):
 #############################
 #Gui module
 #############################
-
 
 def initialpopup():
     Initialpopup = Tk()
@@ -239,6 +244,8 @@ def initialpopup():
     #button2 = Button(Initialpopup, text="Stop Recording", command = stoprecording)
     #button2.pack()
     Initialpopup.mainloop()
+
+
 def authors():
     authors_name = Tk()
     authors_name.title("Authors")
@@ -303,6 +310,7 @@ def help():
     # gotit.pack(side=BOTTOM)
 #button to start other modules
 
+
 def start_stop(bpm, beats):
     global gnomestatus
     if var.get()== 1:
@@ -311,6 +319,7 @@ def start_stop(bpm, beats):
     else:
         gnomestatus = False
         metronome(bpm.get(), beats.get())
+
 
 def mainwindow():
     mainwindow = Tk()
@@ -321,7 +330,6 @@ def mainwindow():
     mainwindow.config(menu=main_menu)
     mainwindow.config(background='#99AAB5')
 
-
     #menu commands
     """def new_command():
         file_path0 = filedialog.askopenfilename()
@@ -330,9 +338,7 @@ def mainwindow():
         file_selected = 1"""
 
 
-
     #create new menu options
-
 
 
     file_menu = Menu(main_menu)
@@ -366,7 +372,7 @@ def mainwindow():
     #Total Students Prompt
     student_amount = Label(mainwindow, text="Use up to Student ID :", bg='#99AAB5')
     student_amount.place(x=10, y=30)
-    ST = Spinbox(mainwindow, from_=0, to=9, width=2, font=("Arial 11"), wrap=True, bg='#99AAB5', bd=0)
+    ST = Spinbox(mainwindow, from_=1, to=9, width=2, font=("Arial 11"), wrap=True, bg='#99AAB5', bd=0)
     ST.place(x=130, y=30)
     #Delay values prompts
     Delay0_label = Label(mainwindow, text ="Student 0 Delay :", bg='#99AAB5')
@@ -442,6 +448,7 @@ def mainwindow():
     #three.pack(side=LEFT, fill=Y)
 
     mainwindow.mainloop()
+
 
 initialpopup()
 mainwindow()

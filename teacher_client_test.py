@@ -8,8 +8,8 @@ import soundfile as sf
 
 # Globals
 s = socket.socket()      # Create a socket object
-#HOST = '18.220.239.193'  # ec2 server
-HOST = '127.0.0.1'       # local host
+HOST = '18.220.239.193'  # ec2 server
+#HOST = '127.0.0.1'       # local host
 T_PORT = 60003           # Reserve a port for your service.
 
 
@@ -80,6 +80,7 @@ def receive_mix():
     print("close conn at receive_mix.")
     s.close()
 
+
 ###########################################################
 #### Pull data from teacher client GUI
 #    to send to server
@@ -126,7 +127,7 @@ def pull_metronome() -> str:
 
 # pull num_students value from GUI; store in a string
 def pull_num_students() -> str:
-    #returns single digit from 0-9
+    #returns single digit from 1-9
 
     return str(1)  # test return
     #return str(num_students)
