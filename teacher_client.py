@@ -110,12 +110,12 @@ def pull_metronome() -> str:
     return as a string to send to server
     """
     # test values
-    """    bpm = mainwindow.bpm_slider.get()
-    t_sig = mainwindow.time_sig_slider.get()
-    tot_measures = mainwindow.measures_slider.get()"""
-    bpm = 72
-    t_sig = 4
-    tot_measures = 4
+    bpm = mainwindow.bpm_slider.get()
+    t_sig = mainwindow.time_sig_top.get()
+    tot_measures = mainwindow.measures_slider.get()
+    #bpm = 72
+    #t_sig = 4
+    #tot_measures = 4
     # bit manipulation
     if bpm < 10:
         bpm = "00"+str(bpm)
@@ -316,7 +316,7 @@ def mainwindow():
     mainwindow = Tk()
     mainwindow.title("NoteSync")
     mainwindow.iconbitmap("NoteSync_icon.ico")
-    mainwindow.geometry("500x400")
+    mainwindow.geometry("600x400")
     main_menu = Menu(mainwindow)
     mainwindow.config(menu=main_menu)
     mainwindow.config(background='#99AAB5')
@@ -345,26 +345,26 @@ def mainwindow():
     #BPM and time signature slider scale
     bpm_label = Label(mainwindow, text ="BPM", bg='#99AAB5')#, bg="red", fg ="gray")
     bpm_label.place(x=300, y=10)
-    bpm_slider = Scale(mainwindow, from_=1, to=200, width=10, orient=HORIZONTAL, bg='#99AAB5') #, tickinterval=100,orient=HORIZONTAL)
+    bpm_slider = Scale(mainwindow, from_=1, to=200, width=15,length = 200, orient=HORIZONTAL,  bg='#99AAB5') #, tickinterval=100,orient=HORIZONTAL)
     bpm_slider.set(100)
     bpm_slider.place(x=360, y=10)
     time_sig_label = Label(mainwindow, text ="Time Signature", bg='#99AAB5')#, bg="red", fg ="gray")
     time_sig_label.place(x=250, y=70)
-    time_sig_top = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"),wrap = True, bg='#99AAB5', bd=0)   #tickinterval=8,,orient=HORIZONTAL)
+    time_sig_top = Spinbox(mainwindow, from_ = 1, to = 16, width = 2,state = 'readonly',readonlybackground = '#99AAB5', font=("Arial 11"),wrap = True, bg='#99AAB5', bd=0)   #tickinterval=8,,orient=HORIZONTAL)
     time_sig_top.place(x=360, y=70)
     tsig_bar = Label(mainwindow, text="----", bg='#99AAB5')  # , bg="red", fg ="gray")
     tsig_bar.place(x=350, y=90)
-    time_sig_bottom = Spinbox(mainwindow, from_ = 0, to = 9, width = 2, font=("Arial 11"), wrap = True, bg='#99AAB5', bd=0)   #,tickinterval=8,orient=HORIZONTAL)
+    time_sig_bottom = Spinbox(mainwindow, from_ = 1, to = 8,values=(1,2,4,8),state = 'readonly',readonlybackground = '#99AAB5', width = 2, font=("Arial 11"), wrap = True, bg='#99AAB5', bd=0)   #,tickinterval=8,orient=HORIZONTAL)
     time_sig_bottom.place(x=360, y=110)
     measures_label = Label(mainwindow, text ="Total Measures", bg='#99AAB5')#, bg="red", fg ="gray")
     measures_label.place(x=250, y =140)
-    measures_slider = Scale(mainwindow, from_=1, to=80, width=10, orient=HORIZONTAL, bg='#99AAB5')
+    measures_slider = Scale(mainwindow, from_=1, to=80, width=15,length = 200, orient=HORIZONTAL, bg='#99AAB5')
     measures_slider.place(x=360, y=150)
     # Student Information Section
     Delay_title = Label(mainwindow, text = "Select Student Information: ", font="helvetica 11", bg='#99AAB5')
     Delay_title.place(x=10, y=10)
     #Total Students Prompt
-    student_amount = Label(mainwindow, text="Total Student IDs :", bg='#99AAB5')
+    student_amount = Label(mainwindow, text="Use up to Student ID :", bg='#99AAB5')
     student_amount.place(x=10, y=30)
     ST = Spinbox(mainwindow, from_=0, to=9, width=2, font=("Arial 11"), wrap=True, bg='#99AAB5', bd=0)
     ST.place(x=130, y=30)
@@ -420,7 +420,7 @@ def mainwindow():
     #send_data = Button(mainwindow, text='Send Data',command= sendit, bg='#F6F6F6') #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
     #send_data.place(x=600, y=150)
     Run_Program = Button(mainwindow, text='Run', font="helvetica 11", command=partial(run_background,teacher_main), bg='#F6F6F6')
-    Run_Program.place(x=220, y=340)
+    Run_Program.place(x=277, y=340)
     # global play
     image = Image.open('Play_button.png')
     image2 = Image.open('Pause_button.png')
@@ -431,7 +431,7 @@ def mainwindow():
     global var
     var = IntVar()
     play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_top), bg='#99AAB5')
-    play.place(x=215, y=270)
+    play.place(x=270, y=270)
 
 
     #play = Button(mainwindow, bd = 0, image = off, command=partial(start_stop, bpm_slider,time_sig_slider)).pack()
