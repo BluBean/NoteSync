@@ -31,6 +31,7 @@ def verify_inputs():
         print(file + " does not exist. Exiting.")
         sys.exit(0)
 
+    # check student id is between 0 and 9
     if int(student) > 9 or int(student) < 0:
         print("Student number is invalid. Valid student numbers are 0-9.")
         sys.exit(0)
@@ -38,6 +39,10 @@ def verify_inputs():
 
 # main student client code
 def stu_main():
+
+    # generate empty wav file
+    f = open('audio' + student + '.wav', "w+")
+    f.close()
 
     # check for user input errors
     verify_inputs()
@@ -75,6 +80,9 @@ def stu_main():
     print(s.recv(1024))
     print("Goodnight, sweet prince.")
     s.close()
+
+    print('system exit')
+    sys.exit(0)
 
 
 """
