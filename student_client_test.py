@@ -5,7 +5,6 @@ import soundfile as sf
 
 
 # Globals
-s = socket.socket() # Create a socket object
 student = sys.argv[1]
 host = sys.argv[2]
 file = sys.argv[3]
@@ -20,25 +19,9 @@ S_PORT = 60002 # Reserve a port for your service.
 # python3 student_client_test.py 1 127.0.0.1 audio1.wav  # local host
 ###########################################################
 
-# check for user input errors
-def verify_inputs():
-    if len(sys.argv) != 4:
-        print("Syntax: python3 client_test.py <student number> <host> <wav file>")
-        sys.exit(0)
-
-    # add check to verify file exists or quit
-    if not os.path.exists(file):
-        print(file + " does not exist. Exiting.")
-        sys.exit(0)
-
-    # check student id is between 0 and 9
-    if int(student) > 9 or int(student) < 0:
-        print("Student number is invalid. Valid student numbers are 0-9.")
-        sys.exit(0)
-
-
 # main student client code
 def stu_main():
+    s = socket.socket()  # Create a socket object
 
     # generate empty wav file
     f = open('audio' + student + '.wav', "w+")
@@ -83,6 +66,23 @@ def stu_main():
 
     print('system exit')
     sys.exit(0)
+
+
+# check for user input errors
+def verify_inputs():
+    if len(sys.argv) != 4:
+        print("Syntax: python3 client_test.py <student number> <host> <wav file>")
+        sys.exit(0)
+
+    # add check to verify file exists or quit
+    if not os.path.exists(file):
+        print(file + " does not exist. Exiting.")
+        sys.exit(0)
+
+    # check student id is between 0 and 9
+    if int(student) > 9 or int(student) < 0:
+        print("Student number is invalid. Valid student numbers are 0-9.")
+        sys.exit(0)
 
 
 """

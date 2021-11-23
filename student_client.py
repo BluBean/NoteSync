@@ -15,18 +15,22 @@ import soundfile as sf
 import time
 
 # Globals
-s = socket.socket()  # Create a socket object
 S_PORT = 60002  # Reserve a port for your service.
+ipadd = '18.220.239.193'  # ec2 server
+#ipadd = '127.0.0.1'  # local
 
 
 ##########################################################
 #### Student Client Connection
 #
 ###########################################################
+
+# main student client code
 def stu_main(student, host, file):
+    s = socket.socket()  # Create a socket object
 
     # check for user input errors
-    verify_inputs(file)
+    verify_inputs(student, file)
 
     # send the recorded file back to server
     with open (file,'rb') as f:
@@ -64,17 +68,32 @@ def stu_main(student, host, file):
     print(s.recv(1024))
     print("Goodnight, sweet prince.")
     s.close()
+
+    print('system exit')
+    sys.exit(0)
+
+
 # add check to verify file exists or quit
-def verify_inputs(file):
+def verify_inputs(student, file):
+
+    # add check to verify file exists or quit
     if not os.path.exists(file):
         print(file + " does not exist. Exiting.")
         sys.exit(0)
+
+    # check student id is between 0 and 9
+    if int(student) > 9 or int(student) < 0:
+        print("Student number is invalid. Valid student numbers are 0-9.")
+        sys.exit(0)
+
+
 def set_values(bpm, t_sig, tot_measures, offset):
     bpm = int(bpm)
     t_sig = int(t_sig)
     tot_measures = int(tot_measures)
     offset = int(offset)
     return bpm, t_sig, tot_measures, offset
+
 
 ###########################################################
 #### Voice recorder MODULE
@@ -86,6 +105,7 @@ def set_values(bpm, t_sig, tot_measures, offset):
 # --- output ---
 # write to .wav file
 ###########################################################
+
 def record(bpm, t_sig, tot_measures, offset, student):
     offset_size =60 * (t_sig / bpm)
     global red, blue, yellow, gnomestatus
@@ -128,7 +148,7 @@ def record(bpm, t_sig, tot_measures, offset, student):
   #  bpm = int(input("Enter bpm value: "))
   #  tsig = int(input("Enter bpb value: "))
 
-    # define metronome tool
+# define metronome tool
 def metronome(bpm, tsig):
     global gnomestatus
     global metrostatus
@@ -153,9 +173,12 @@ def metronome(bpm, tsig):
         time.sleep(sleep)
     if gnomestatus:
         background(metronome, bpm, tsig)
+
+
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
+
 
 def backgroundmetro(bpm, tsig):
     global red, blue, yellow, gnomestatus
@@ -180,6 +203,7 @@ def backgroundmetro(bpm, tsig):
     print("I called the metronome")
     background(metronome, bpm, tsig)
 
+
 #############################
 #Gui module
 #############################
@@ -201,6 +225,7 @@ def initialpopup():
     #button2.pack()
     Initialpopup.mainloop()
 
+
 def authors():
     authors_name = Tk()
     authors_name.title("Authors")
@@ -214,6 +239,7 @@ def authors():
     authors = Button(authors_name, text="OK", command=authors_name.destroy, bg = "#FFFFFF")
     authors.pack()
     authors_name.mainloop()
+
 
 def help():
     tutorial = Tk()
@@ -250,14 +276,9 @@ def help():
     text_widget.configure(state='disabled')
     #gotit.pack(side=BOTTOM)
 
-#menu commands
-def new_command():
-    file_path0 = filedialog.askopenfilename()
-def save_command():
-    file_path = filedialog.asksaveasfilename()
-    file_selected = 1
+
 # command to run Client
-def runClient(student ,ipadd):
+def runClient(student, ipadd):
     #os.system('TestClient.py 2 18.220.239.193 audio2.wav')
     print(ipadd)
     stu = student.get()
@@ -266,9 +287,10 @@ def runClient(student ,ipadd):
     f.close()
     stu_main(stu, ipadd, filename)
 
+
 class mainwindow:
     def __init__(self):
-        global metro_display
+        global metro_display, ipadd
         mainwindow = Tk()
         mainwindow.title("NoteSync")
         mainwindow.iconbitmap("NoteSync_icon.ico")
@@ -290,8 +312,11 @@ class mainwindow:
 
         # Button to activate 'TestClient.py'
         #student = '2'
-        #ipadd = '18.220.239.193'
-        ipadd= '127.0.0.1'
+
+
+        # old ipadd location
+
+
         #filename = 'audio2.wav'
         current_value = '0'
         student_label = Label(mainwindow, text ="Select Student Number:", font=("32"), bg = "#bca76a")
@@ -322,7 +347,6 @@ class mainwindow:
         if yellow:
             metro_display.configure(bg='yellow')
 
+
 initialpopup()
 mainwindow()
-
-
