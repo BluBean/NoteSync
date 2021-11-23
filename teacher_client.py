@@ -470,7 +470,7 @@ def serverlaunch():
 
 def start_stop(bpm, beats):
     global gnomestatus
-    if mainwindow.var.get()== 1:
+    if var.get()== 1:
         gnomestatus = True
         metronome(bpm.get(), beats.get())
     else:
@@ -596,6 +596,7 @@ def mainwindow():
     resize_image2 = image2.resize((50,50))
     off = itk.PhotoImage(resize_image)
     on = itk.PhotoImage(resize_image2)
+    global var
     var = IntVar()
     play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_top), bg='#99AAB5')
     play.place(x=215, y=270)

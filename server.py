@@ -410,9 +410,11 @@ def sync_files():
 def s_check_received():
     print("checking files")
     files_received = 0  # initialize
-    for stu_id in range(0, 10):
+    stu_id = 0
+    while not (stu_id == 10):
         stu_id_str = str(stu_id)
         filename = 'student_' + stu_id_str + '.wav'
+        stu_id = stu_id +1
         if os.path.exists(filename):
             mix_rename = str(files_received)
             os.rename(filename, "mixer" + mix_rename + ".wav")
