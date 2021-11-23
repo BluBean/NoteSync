@@ -6,8 +6,9 @@ import threading
 import json
 import os
 import os.path
+import sys
 import time
-from pydub import AudioSegment
+from pydub import AudioSegment, effects
 import soundfile as sf
 
 # double check line 38 when switching between local and ec2
@@ -133,10 +134,11 @@ def main():
         #   close teacher connections  #
         ################################
 
-
+        print('reset globals')
         reset_globals()
 
-        exit()
+        print('system exit')
+        sys.exit(0)
 
 
 # receive metronome and offset data from teacher client
@@ -170,11 +172,6 @@ def t_download_seq(conn, addr):
     notify = 'done'
     conn.send(bytes(notify, 'utf-8'))
     print("notify: ", notify)
-
-    ### test ###
-    # generate empty wav file
-    f = open('final_mix.wav', "w+")
-    f.close()
 
     # send the recorded file back to client
     with open('final_mix.wav', 'rb') as f:
@@ -328,25 +325,6 @@ def encode_metronome(metronome) -> str:
     return str(bpm) + "," + str(t_sig) + "," + str(tot_measures)
 
 
-###########################################################
-#### Calculations
-#
-###########################################################
-
-# use values retrieved from server GUI to calculate offset
-def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
-    '''
-    bpm : bpm
-    num_measures: number of measures for offset to be
-    tot_measures: total number of measures
-
-    returns: number of samples gets returned as a string
-    '''
-    value = "1"
-    return value
-
-
-
 #################################################################
 # Mixer Module
 # Calculates offset required
@@ -362,20 +340,11 @@ def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
 # --- output:
 # duration = milliseconds of buffer required
 #################################################################
-def calc_duration(bpm, beats, num_meas):
-    duration = beats * (num_meas / bpm)
-    print('duration: ', duration)
-    return duration
-
-    """      def read_audio(audio_file):
-    rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
-    return data, rate"""
-
-
 
 def sync_files():
     global T_NUM_STUDENTS
     num_students = int(T_NUM_STUDENTS)
+
     print("starting sync")
     # check_student_files(num_students)
     s_check_received()
@@ -387,9 +356,10 @@ def sync_files():
     samplerate = [None] * len(samplerate)
     length = []
     main_file = AudioSegment.from_file("mixer0.wav", format="wav")
+    main_file = effects.normalize(main_file)    #normalized audio file
 
     if num_students != 1:
-        for id in range(1, num_students):
+        for id in range(1, num_students+1):
             strid = str(id)
             dat, samplerat = sf.read("mixer" + strid + ".wav")
             data[id] = dat
@@ -397,8 +367,9 @@ def sync_files():
             info = sf.info('mixer' + strid + '.wav')
             print('\n', info)
             addition_file = AudioSegment.from_file("mixer" + strid + ".wav", format="wav")
+            addition_file = effects.normalize(addition_file)  #normalized audio file
             main_file = main_file.overlay(addition_file, position=0)  # Overlay audio2 over audio1
-    file_handle = main_file.export("buffered_overlay.wav", format="wav")
+    file_handle = main_file.export("final_mix.wav", format="wav")
 
     #audio1 = AudioSegment.from_file("audio2.wav", format="wav")
     #audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
@@ -433,10 +404,6 @@ def sync_files():
     #file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file"""
 
 
-############################################
-##Checking to see if we got all the files
-############################################
-
 # Check to see if we got all the files
 def s_check_received():
     print("checking files")
@@ -448,7 +415,6 @@ def s_check_received():
             mix_rename = str(files_received)
             os.rename(filename, "mixer" + mix_rename + ".wav")
             files_received = files_received + 1
-
 
 
 ### main program ###

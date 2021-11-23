@@ -102,9 +102,9 @@ def pull_metronome() -> str:
     """    bpm = mainwindow.bpm_slider.get()
     t_sig = mainwindow.time_sig_slider.get()
     tot_measures = mainwindow.measures_slider.get()"""
-    bpm = 72
-    t_sig = 4
-    tot_measures = 4
+    bpm = 72  # test
+    t_sig = 4  # test
+    tot_measures = 4  # test
     # bit manipulation
     if bpm < 10:
         bpm = "00"+str(bpm)
@@ -128,7 +128,7 @@ def pull_metronome() -> str:
 def pull_num_students() -> str:
     #returns single digit from 0-9
 
-    return str(2)  # test return
+    return str(1)  # test return
     #return str(num_students)
 
 
@@ -176,6 +176,8 @@ def teacher_main():
     # close connection with server
     #close_conn()
 
+    print('system exit')
+    sys.exit(0)
 
 
 # run teacher client file
