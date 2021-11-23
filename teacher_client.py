@@ -15,12 +15,6 @@ import threading
 from playsound import playsound
 import sounddevice as sd
 from scipy.io.wavfile import write
-###################################
-###Imports for DSP module
-import numpy as np
-from pydub import AudioSegment
-import soundfile as sf
-from sys import argv
 ## Import for metronome
 import time
 
@@ -37,12 +31,10 @@ T_PORT = 60003           # Reserve a port for your service.
 #
 ###########################################################
 
-# send GUI data from metronome to server
-def send_GUI_data():
-    student = '1'
-    s.send(str.encode(student))
-    print("Sent student info")
-    return
+# connect to server
+def conn_server():
+    s.connect((HOST, T_PORT))
+    print("Connected.")
 
 # close connection to server
 def close_conn():
@@ -51,12 +43,7 @@ def close_conn():
     print("Goodbye.")
     s.close()
 
-# connect to server
-def conn_server():
-    s.connect((HOST, T_PORT))
-    print("Connected.")
-
-#send_GUI_data()
+# send teacher GUI data to server
 def send_GUI_data(ids):
 
     # teacher GUI data
@@ -106,8 +93,8 @@ def receive_mix():
 
 
 ###########################################################
-#### Pull from GUI and local calculations
-#
+#### Pull data from teacher client GUI
+#    to send to server
 ###########################################################
 
 # pull metronome values from GUI; store in a string
@@ -195,148 +182,6 @@ def teacher_main():
 
     # try to receive wav
     receive_mix()
-
-# use values retrieved from server GUI to calculate offset
-def wav_file_calculation(bpm: int, num_measures: int, tot_measures: int) -> int:
-    '''
-    bpm : bpm
-    num_measures: number of measures for offset to be
-    tot_measures: total number of measures
-
-    returns: number of samples gets returned
-    '''
-    #Find duration for offset and main piece and combine the values for total number of samples
-    Dur_Offset = dsp.calc_duration(bpm, mainwindow.time_sig_slider, num_measures)
-    Dur_Main = dsp.calc_duration(bpm, mainwindow.time_sig_slider, tot_measures)
-    value = Dur_Main + Dur_Offset
-    return value
-
-
-# retrieve metronome values from GUI for use in calculations
-def pull_values():
-    """
-    Pull values from metronome.
-    """
-    bpm_value = mainwindow.bpm_slider.get()
-
-
-    return bpm_value, 0, 0
-
-
-# store calculated offsets in dictionary
-def get_offsets(ids: List) -> dict:
-    store = {}
-    bpm, num_measures, tot_measures = pull_values()
-    for val in ids:
-        store[val] = wav_file_calculation(bpm, num_measures, tot_measures)
-    return store
-
-
-###########################################################
-####DSP MODULE
-###########################################################
-class dsp:
-    """
-    sf1 = sf.SoundFile('audio1.wav')
-    print('samples = {}'.format(sf1.frames))
-    print('sample rate = {}'.format(sf1.samplerate))
-    print('seconds = {}'.format(sf1.frames / sf1.samplerate))
-    ls1 = sf1.frames
-    print(ls1)
-
-    sf2 = sf.SoundFile('audio2.wav')
-    print('samples = {}'.format(sf2.frames))
-    print('sample rate = {}'.format(sf2.samplerate))
-    print('seconds = {}'.format(sf2.frames / sf2.samplerate))
-    ls2 = sf2.frames
-    print(ls2)
-    """
-
-    #################################################################
-    # Calculates offset required
-    #
-    # --- inputs:
-    # beats = beats per measure (from selected time signature)
-    # num_meas = number of measures from song start
-    #                     to when student begins
-    # bpm = beats per minute (tempo)
-    #
-    # --- output:
-    # duration = milliseconds of buffer required
-    #################################################################
-
-    def testvariables(bpm, beats, num_meas):
-        print("this is test of gui sliders \n bpm = ", bpm, "\n beats= ", beats, "\n measures= ", num_meas)
-
-    def calc_duration(bpm, beats, num_meas):
-        duration = beats * (num_meas / bpm)
-        print('duration: ', duration)
-
-    def read_audio(audio_file):
-        rate, data = sf.read(audio_file)  # Return the sample rate (in samples/sec) and data from a WAV file
-        return data, rate
-
-    def syncfiles(bpm, beats, num_meas):
-
-        s1, fs1 = sf.read('audio1.wav')  # get data, samplerate
-        info1 = sf.info('audio1.wav')
-        # bits1 = sf.samplerate('audio1.wav')
-        print(info1)
-
-        s2, fs2 = sf.read('audio2.wav')
-        info2 = sf.info('audio2.wav')
-        # bits2 = sf.samplerate('audio2.wav')
-        print('\n', info2)
-        # print(s1, fs1, s2, fs2)
-
-        # e = s1-s2 # difference signal
-        l1 = len(s1)  # total number of samples
-        l2 = len(s2)
-        print(l1, l2)
-        max_samples = max(l1, l2)  # file with greatest number of samples
-        min_samples = min(l1, l2)
-        samples_offset = abs(max_samples - min_samples)
-        print(samples_offset)
-
-        # add buffer to beginning of shorter audio file
-        buffer = np.zeros(samples_offset)  # generate buffer
-        # print(buffer)
-
-        sf.write('buffer.wav', buffer, 48000)  # create buffer .wav file
-        audio = AudioSegment.from_file('audio1.wav', format="wav")  # open both .wav files to write
-        buffer_audio = AudioSegment.from_file('buffer.wav', format="wav")
-        combined = buffer_audio + audio  # audio with buffer appended at beginning
-        file_handle = combined.export("buffered_audio.wav", format="wav")  # export buffered wav file
-
-        audio1 = AudioSegment.from_file("audio2.wav", format="wav")
-        audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
-        boost1 = audio1 + 9  # audio1 x dB louder (clipping)
-        overlay = boost1.overlay(audio2, position=0)  # Overlay audio2 over audio1
-        file_handle = overlay.export("buffered_overlay.wav", format="wav")  # export overlaid wav files
-        dsp.testvariables(bpm, beats, num_meas)
-
-###########################################################
-#### Voice recorder MODULE
-#
-# --- inputs ---
-# rec_samples = duration of recording (samples)
-# offset = buffer duration (samples)
-#
-# --- output ---
-# write to .wav file
-###########################################################
-
-## record(<samples in recording>, <samples in offset>)
-def record(rec_samples, offset):
-    fs = 48000  # Sample rate
-    duration = rec_samples  # Duration of recording (samples)
-    print('offset (samples): ', offset)
-     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
-    myrecording = sd.rec(int(duration), samplerate=fs, channels=2)
-    sd.wait()  # Wait until recording is finished
-    # write('input1.wav', fs, myrecording)  # Save as WAV file
-    sf.write('test.wav', myrecording, fs, subtype='PCM_16')
-    print('voice recording saved')
 
 #############################
 # Metronome module
@@ -457,19 +302,6 @@ def help():
     text_widget.configure(state='disabled')
     # gotit.pack(side=BOTTOM)
 #button to start other modules
-def recorderlaunch(bpm, beats, num_meas):
-    print('Recording in progress')
-    rec_length = beats.get() * (num_meas.get() / bpm.get()) #length in seconds
-    samples = 48000 * 60 * rec_length  #length to record based on GUI (samples)
-    offset_size = 48000 * 60 * (beats.get()/bpm.get())  # samples per measure or known as the amount of samples in an offset
-    record(samples, offset_size)  # args  record(<samples in recording>, <samples in offset>)
-
-def DSPlaunch(bpm, beats, num_meas):
-    #print('sync files button worked')
-    dsp.syncfiles(bpm.get(), beats.get(), num_meas.get())
-
-def serverlaunch():
-    serve([1, 3, 4, 5])
 
 def start_stop(bpm, beats):
     global gnomestatus
@@ -479,9 +311,6 @@ def start_stop(bpm, beats):
     else:
         gnomestatus = False
         metronome(bpm.get(), beats.get())
-
-def sendit():
-    print("I'm not programmed yet slut!")
 
 def mainwindow():
     mainwindow = Tk()
