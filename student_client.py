@@ -16,8 +16,8 @@ import time
 
 # Globals
 S_PORT = 60002  # Reserve a port for your service.
-#ipadd = '18.220.239.193'  # ec2 server
-ipadd = '127.0.0.1'  # local
+ipadd = '18.220.239.193'  # ec2 server
+#ipadd = '127.0.0.1'  # local
 
 
 ##########################################################
@@ -158,21 +158,28 @@ def metronome(bpm, tsig):
     print("I'm in the metronome")
     while gnomestatus: # =True:
         counter += 1
-        if counter % tsig:
+        if counter == 1:
+            print(f'TICK')
+            playsound('Tick.wav', False)
+            metrovalue=metrovalue+1
+            metrostatus.set(metrovalue)
+        elif counter % tsig:
             print(f'tock')
             playsound('tock.wav', False)
             metrovalue=metrovalue+1
             metrostatus.set(metrovalue)
         else:
-            print(f'TICK')
-            playsound('Tick.wav', False)
+            print(f'tock')
+            playsound('tock.wav', False)
             metrovalue=tsig
             metrostatus.set(metrovalue)
             metrovalue=0
+            counter = 0
 
         time.sleep(sleep)
     if gnomestatus:
         background(metronome, bpm, tsig)
+    metrostatus.set(0)
 
 
 def background(func, arg1, arg2):
@@ -189,6 +196,13 @@ def backgroundmetro(bpm, tsig):
     metrovalue = 0
     sleep = 60.0 / bpm
     counter = 1
+    if counter == 1:
+        print(f'TICK')
+        playsound('Tick.wav', False)
+        metrovalue = metrovalue + 1
+        metrostatus.set(metrovalue)
+        time.sleep(sleep)
+        counter += 1
     while counter % int(tsig):
         print(f'tock')
         playsound('tock.wav', False)
@@ -197,8 +211,8 @@ def backgroundmetro(bpm, tsig):
         time.sleep(sleep)
         counter += 1
 
-    print(f'TICK')
-    playsound('Tick.wav', False)
+    print(f'tock')
+    playsound('tock.wav', False)
     metrovalue = metrovalue + 1
     metrostatus.set(metrovalue)
     time.sleep(sleep)

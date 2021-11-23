@@ -20,8 +20,8 @@ import time
 
 
 # Globals
-#HOST = '18.220.239.193'  # ec2 server
-HOST = '127.0.0.1'       # local host
+HOST = '18.220.239.193'  # ec2 server
+#HOST = '127.0.0.1'       # local host
 T_PORT = 60003           # Reserve a port for your service.
 
 
