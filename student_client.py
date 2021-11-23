@@ -186,17 +186,20 @@ def backgroundmetro(bpm, tsig):
     blue = False
     yellow = True
     mainwindow.change_color(mainwindow)
-    metrovalue = 1
+    metrovalue = 0
     sleep = 60.0 / bpm
-    while metrovalue != tsig:
+    counter = 1
+    while counter % int(tsig):
         print(f'tock')
         playsound('tock.wav', False)
         metrovalue = metrovalue + 1
         metrostatus.set(metrovalue)
         time.sleep(sleep)
+        counter += 1
 
     print(f'TICK')
     playsound('Tick.wav', False)
+    metrovalue = metrovalue + 1
     metrostatus.set(metrovalue)
     time.sleep(sleep)
     gnomestatus = True
