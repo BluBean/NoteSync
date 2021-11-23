@@ -20,9 +20,8 @@ import time
 
 
 # Globals
-s = socket.socket()      # Create a socket object
-HOST = '18.220.239.193'  # ec2 server
-#HOST = '127.0.0.1'       # local host
+#HOST = '18.220.239.193'  # ec2 server
+HOST = '127.0.0.1'       # local host
 T_PORT = 60003           # Reserve a port for your service.
 
 
@@ -32,13 +31,13 @@ T_PORT = 60003           # Reserve a port for your service.
 ###########################################################
 
 # connect to server
-def conn_server():
+def conn_server(s):
     s.connect((HOST, T_PORT))
     print("Connected.")
 
 
 # close connection to server
-def close_conn():
+def close_conn(s):
     print("Done Sending")
     s.shutdown(socket.SHUT_WR)
     print("Goodbye.")
@@ -46,16 +45,15 @@ def close_conn():
 
 
 # send teacher GUI data to server
-def send_GUI_data(ids):
+def send_GUI_data(s, ids):
 
     # teacher GUI data
     metronome = pull_metronome()
+    print('pull metronome: ', metronome)
     num_students = pull_num_students()
+    print('pull num_students: ', num_students)
     offsets = pull_offsets(ids)
-
-    print(num_students)
-    print(metronome)
-    print(offsets)
+    print('pull offsets: ', offsets)
 
     # Send metronome
     s.send(bytes(metronome, 'utf-8'))
@@ -75,7 +73,7 @@ def send_GUI_data(ids):
 
 
 # receive final mix as WAV
-def receive_mix():
+def receive_mix(s):
 
     # generate empty wav file
     f = open('NoteSync.wav', "w+")
@@ -173,9 +171,11 @@ def teacher_main():
     # available student IDs
     ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
+    s = socket.socket()  # Create a socket object
+
     # connect and send data to server
-    conn_server()
-    send_GUI_data(ids)
+    conn_server(s)
+    send_GUI_data(s, ids)
 
     # wait to receive final wav file
     while True:
@@ -186,10 +186,10 @@ def teacher_main():
         elif notify != b'done':
             s.close()
             print("Failed to receive notification")
-            exit()
+            sys.exit(0)
 
     # try to receive wav
-    receive_mix()
+    receive_mix(s)
 
 
 #############################
@@ -213,7 +213,6 @@ def metronome(bpm, tsig):
         else:
             print(f'TICK')
             playsound('Tick.wav', False)
-            time.sleep(sleep)
             #mainwindow.after(1,start_stop(mainwindow.bpm_slider, mainwindow.time_sig_slider))
         time.sleep(sleep)
     if gnomestatus:
