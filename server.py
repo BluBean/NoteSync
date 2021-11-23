@@ -364,7 +364,11 @@ def sync_files():
     data = [None] * len(data)
     samplerate = [None] * len(samplerate)
     length = []
-    main_file = AudioSegment.from_file("mixer0.wav", format="wav")
+    if os.path.exists("mixer0.wav"):
+        main_file = AudioSegment.from_file("mixer0.wav", format="wav")
+    else:
+        print("mixer0.wav does not exist. Exiting...")
+        sys.exit(0)
     main_file = effects.normalize(main_file)    #normalized audio file
 
     if num_students > 0:

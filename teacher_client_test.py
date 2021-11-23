@@ -7,9 +7,8 @@ import soundfile as sf
 
 
 # Globals
-s = socket.socket()      # Create a socket object
-HOST = '18.220.239.193'  # ec2 server
-#HOST = '127.0.0.1'       # local host
+#HOST = '18.220.239.193'  # ec2 server
+HOST = '127.0.0.1'       # local host
 T_PORT = 60003           # Reserve a port for your service.
 
 
@@ -19,13 +18,13 @@ T_PORT = 60003           # Reserve a port for your service.
 ###########################################################
 
 # connect to server
-def conn_server():
+def conn_server(s):
     s.connect((HOST, T_PORT))
     print("Connected.")
 
 
 # close connection to server
-def close_conn():
+def close_conn(s):
     print("Done Sending")
     s.shutdown(socket.SHUT_WR)
     print("Goodbye.")
@@ -33,7 +32,7 @@ def close_conn():
 
 
 # send teacher GUI data to server
-def send_GUI_data(ids):
+def send_GUI_data(s, ids):
 
     # teacher GUI data
     metronome = pull_metronome()
@@ -58,7 +57,7 @@ def send_GUI_data(ids):
 
 
 # receive final mix as WAV
-def receive_mix():
+def receive_mix(s):
 
     # generate empty wav file
     f = open('NoteSync.wav', "w+")
@@ -156,6 +155,8 @@ def teacher_main():
     # available student IDs
     ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
+    s = socket.socket()  # Create a socket object
+
     # connect and send data to server
     conn_server()
     send_GUI_data(ids)
@@ -169,7 +170,7 @@ def teacher_main():
         elif notify != b'done':
             s.close()
             print("Failed to receive notification")
-            exit()
+            sys.exit(0)
 
     # try to receive wav
     receive_mix()
@@ -179,7 +180,7 @@ def teacher_main():
 
     print('system exit')
     sys.exit(0)
-
+    exit(0)
 
 # run teacher client file
 teacher_main()
