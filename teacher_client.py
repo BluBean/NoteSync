@@ -589,17 +589,17 @@ def mainwindow():
     #send_data = Button(mainwindow, text='Send Data',command= sendit, bg='#F6F6F6') #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
     #send_data.place(x=600, y=150)
     Run_Program = Button(mainwindow, text='Run', font="helvetica 11", command=teacher_main, bg='#F6F6F6')
-    Run_Program.place(x=50, y=300)
+    Run_Program.place(x=220, y=340)
     # global play
-    image = Image.open('Off.png')
-    image2 = Image.open('On.png')
-    resize_image = image.resize((100,50))
-    resize_image2 = image2.resize((100,50))
+    image = Image.open('Play_button.png')
+    image2 = Image.open('Pause_button.png')
+    resize_image = image.resize((50,50))
+    resize_image2 = image2.resize((50,50))
     off = itk.PhotoImage(resize_image)
     on = itk.PhotoImage(resize_image2)
     var = IntVar()
     play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_top), bg='#99AAB5')
-    play.place(x=150, y=300)
+    play.place(x=215, y=270)
 
 
     #play = Button(mainwindow, bd = 0, image = off, command=partial(start_stop, bpm_slider,time_sig_slider)).pack()
