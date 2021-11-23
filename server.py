@@ -369,7 +369,9 @@ def sync_files():
             addition_file = AudioSegment.from_file("mixer" + strid + ".wav", format="wav")
             addition_file = effects.normalize(addition_file)  #normalized audio file
             main_file = main_file.overlay(addition_file, position=0)  # Overlay audio2 over audio1
+            os.remove("mixer" + strid + ".wav")
     file_handle = main_file.export("final_mix.wav", format="wav")
+    os.remove("mixer0.wav")
 
     #audio1 = AudioSegment.from_file("audio2.wav", format="wav")
     #audio2 = AudioSegment.from_file("buffered_audio.wav", format="wav")
