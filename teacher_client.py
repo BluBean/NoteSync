@@ -367,6 +367,9 @@ def metronome(bpm, tsig):
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
+def run_background(func):
+    t = threading.Thread(target=func)
+    t.start()
 
 
 #############################
@@ -587,7 +590,7 @@ def mainwindow():
     #sync_files.place(x=525, y=50)
     #send_data = Button(mainwindow, text='Send Data',command= sendit, bg='#F6F6F6') #,command= partial(recorderlaunch,bpm_slider,time_sig_slider,measures_slider))
     #send_data.place(x=600, y=150)
-    Run_Program = Button(mainwindow, text='Run', font="helvetica 11", command=teacher_main, bg='#F6F6F6')
+    Run_Program = Button(mainwindow, text='Run', font="helvetica 11", command=partial(run_background,teacher_main), bg='#F6F6F6')
     Run_Program.place(x=220, y=340)
     # global play
     image = Image.open('Play_button.png')
