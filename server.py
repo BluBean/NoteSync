@@ -11,9 +11,7 @@ import time
 from pydub import AudioSegment, effects
 import soundfile as sf
 
-# double check line 38 when switching between local and ec2
-
-
+# double check lines 41-42 when switching between local and ec2
 # Globals
 T_PORT = 60003  # teacher port
 S_PORT = 60002  # student port
@@ -40,8 +38,8 @@ def create_socket(port, t_sec, t_type):
     host = socket.gethostname()
 
     # Bind to port
-    s.bind((host, port))  # ec2 server
-    #s.bind(("127.0.0.1", port))  # local
+    #s.bind((host, port))  # ec2 server
+    s.bind(("127.0.0.1", port))  # local
 
     return s
 
@@ -369,7 +367,7 @@ def sync_files():
     main_file = AudioSegment.from_file("mixer0.wav", format="wav")
     main_file = effects.normalize(main_file)    #normalized audio file
 
-    if num_students != 1:
+    if num_students > 0:
         for id in range(1, num_students+1):
             strid = str(id)
             dat, samplerat = sf.read("mixer" + strid + ".wav")
@@ -380,7 +378,6 @@ def sync_files():
             addition_file = AudioSegment.from_file("mixer" + strid + ".wav", format="wav")
             addition_file = effects.normalize(addition_file)  #normalized audio file
             main_file = main_file.overlay(addition_file, position=0)  # Overlay audio2 over audio1
-            os.remove("mixer" + strid + ".wav")
     file_handle = main_file.export("final_mix.wav", format="wav")
 
 
