@@ -272,7 +272,7 @@ class mainwindow:
         mainwindow = Tk()
         mainwindow.title("NoteSync")
         mainwindow.iconbitmap("NoteSync_icon.ico")
-        mainwindow.geometry("300x200")
+        mainwindow.geometry("300x250")
         main_menu = Menu(mainwindow)
         mainwindow.config(background='#bca76a')
         mainwindow.config(menu=main_menu)
@@ -294,14 +294,14 @@ class mainwindow:
         ipadd= '127.0.0.1'
         #filename = 'audio2.wav'
         current_value = '0'
-        student_label = Label(mainwindow, text ="Student number select", font=("32"), bg = "#bca76a")
-        student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("Arial 32"), bg = "#bca76a")
+        student_label = Label(mainwindow, text ="Select Student Number:", font=("32"), bg = "#bca76a")
+        student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("helvetica 32"), bg = "#bca76a")
 
         Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#F6F6F6")
         global metrostatus
         metrostatus = IntVar()
 
-        metro_display = Label(mainwindow, width=2, font=("Arial", 45), bg = "#bca76a", textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
+        metro_display = Label(mainwindow, width=2, font=("helvetica", 45), bg = "#bca76a", textvariable=metrostatus) #, font=("Arial 32 bold"), bd = 0, fg = 'red')
 
         self.metro_display = metro_display
 
