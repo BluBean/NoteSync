@@ -50,7 +50,7 @@ def stu_main(student, host, file):
         bpm, t_sig, tot_measures, offset = set_values(bpm,t_sig, tot_measures, offset)
 
         # record and save recording
-        backgroundmetro(metronome, bpm, t_sig)
+        backgroundmetro(bpm, t_sig)
         record(bpm, t_sig, tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
@@ -157,13 +157,13 @@ def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
 
-def backgroundmetro(func, bpm, tsig):
+def backgroundmetro(bpm, tsig):
     global red, blue, yellow, gnomestatus
     red = False
     blue = False
     yellow = True
     mainwindow.change_color(mainwindow)
-    metrovalue = 0
+    metrovalue = 1
     sleep = 60.0 / bpm
     while metrovalue != tsig:
         print(f'tock')
@@ -318,7 +318,7 @@ class mainwindow:
         if red:
             metro_display.configure(bg='red')
         if blue:
-            metro_display.configure(bg='blue')
+            metro_display.configure(bg="#bca76a")
         if yellow:
             metro_display.configure(bg='yellow')
 
