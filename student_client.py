@@ -214,8 +214,8 @@ def prerecorded_audio(bpm, t_sig, tot_measures, offset, student):
     print('offset (samples): ', offset)
     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
     #threading.timer(delay_display,mainwindow.metro_display.configure(bg='red') ).start()
-    red = False
-    gold = True
+    red = True
+    gold = False
     yellow = False
     mainwindow.change_color(mainwindow)  #changing color to red
 
