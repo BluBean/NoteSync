@@ -55,6 +55,7 @@ def stu_main(student, host, file):
 
         # record and save recording
         backgroundmetro(bpm, t_sig)
+        offset_background(offset_state, offset, t_sig, bpm)
         record(bpm, t_sig, tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
 
         print("Sending...")
@@ -108,7 +109,7 @@ def set_values(bpm, t_sig, tot_measures, offset):
 
 def record(bpm, t_sig, tot_measures, offset, student):
     offset_size =60 * (t_sig / bpm)
-    global red, blue, yellow, gnomestatus
+    global red, gold, yellow, gnomestatus
     delay_display = (offset_size * offset)
     print('bpm: ', bpm, 't_sig: ', t_sig, 'tot_measures: ', tot_measures)
     # calculate recording length from GUI
@@ -119,10 +120,6 @@ def record(bpm, t_sig, tot_measures, offset, student):
     print('offset (samples): ', offset)
     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
     #threading.timer(delay_display,mainwindow.metro_display.configure(bg='red') ).start()
-    red = True
-    blue = False
-    yellow = False
-    mainwindow.change_color(mainwindow)  #changing color to red
     myrecording = sd.rec(int(samples), samplerate=fs, channels=2)
     sd.wait()  # Wait until recording is finished
     # write('input1.wav', fs, myrecording)  # Save as WAV file
@@ -130,9 +127,9 @@ def record(bpm, t_sig, tot_measures, offset, student):
     print('voice recording saved')
     gnomestatus = False
     red = False
-    blue = True
+    gold = True
     yellow = False
-    mainwindow.change_color(mainwindow)  #changes color to blue
+    mainwindow.change_color(mainwindow)  #changes color to gold
 
 ###########################################################
 #### Client MODULE
@@ -181,16 +178,32 @@ def metronome(bpm, tsig):
         background(metronome, bpm, tsig)
     metrostatus.set(0)
 
+def offset_state(offset, tsig,bpm):
+    global red, gold, yellow
+    offset_delay = offset * tsig
+    sleep = 60.0 / bpm
+    count = 0
+    while not count == offset_delay:
+        count += 1
+        time.sleep(sleep)
+
+    red = True
+    gold = False
+    yellow = False
+    print("changing color to red")
+    mainwindow.change_color(mainwindow)  #changing color to red
 
 def background(func, arg1, arg2):
     t = threading.Thread(target=func, args= (arg1, arg2))
     t.start()
-
+def offset_background(func, arg1, arg2, arg3):
+    t = threading.Thread(target=func, args= (arg1, arg2,arg3))
+    t.start()
 
 def backgroundmetro(bpm, tsig):
-    global red, blue, yellow, gnomestatus
+    global red, gold, yellow, gnomestatus
     red = False
-    blue = False
+    gold = False
     yellow = True
     mainwindow.change_color(mainwindow)
     metrovalue = 0
@@ -279,8 +292,8 @@ def help():
             2.Wait until the teacher instructs you to press "Run Client"
             
             3.You will see an indicator that shows you when you can sing.
-            the indicator will be red for the countdown and then it will 
-            turn blue when the program is recording and you wil hear a
+            the indicator will be yellow for the countdown and then it will 
+            turn red when the program is recording and you wil hear a
             metronome that is controlled by the teacher.
             
             4.All set! At the end of the recording, your audio file will 
@@ -359,7 +372,7 @@ class mainwindow:
     def change_color(self):
         if red:
             metro_display.configure(bg='red')
-        if blue:
+        if gold:
             metro_display.configure(bg="#bca76a")
         if yellow:
             metro_display.configure(bg='yellow')
