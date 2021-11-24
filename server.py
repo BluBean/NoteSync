@@ -38,8 +38,8 @@ def create_socket(port, t_sec, t_type):
     host = socket.gethostname()
 
     # Bind to port
-    #s.bind((host, port))  # ec2 server
-    s.bind(("127.0.0.1", port))  # local
+    s.bind((host, port))  # ec2 server
+    #s.bind(("127.0.0.1", port))  # local
 
     return s
 
@@ -368,6 +368,10 @@ def sync_files():
         main_file = AudioSegment.from_file("mixer0.wav", format="wav")
     else:
         print("mixer0.wav does not exist. Exiting...")
+        print('remove WAV files from server')
+        clear_wav()
+        print('reset globals')
+        reset_globals()
         sys.exit(0)
     main_file = effects.normalize(main_file)    #normalized audio file
 
