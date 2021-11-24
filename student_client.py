@@ -20,8 +20,8 @@ ipadd = '18.220.239.193'  # ec2 server
 #ipadd = '127.0.0.1'  # local
 
 # select demo wav file
-DEMO_WAV = 'Base_b89_t4_m9_o0.wav'
-#DEMO_WAV = 'Drum_b89_t4_m9_o2.wav'
+#DEMO_WAV = 'Base_b89_t4_m9_o0.wav'
+DEMO_WAV = 'Drum_b89_t4_m9_o2.wav'
 #DEMO_WAV = 'Guit_b89_t4_m9_o3.wav'
 #DEMO_WAV = 'Theo_b89_t4_m9_o4.wav'
 #DEMO_WAV = 'Pian_b89_t4_m9_o5.wav'
@@ -117,6 +117,7 @@ def stu_main(student, host, file):
 
         # record and save recording
         backgroundmetro(bpm, t_sig)
+        offset_background(offset_state, offset, t_sig, bpm)
         #record(bpm, t_sig, tot_measures, offset, student)  # (<duration of recording>, <offset>) (samples)
         prerecorded_audio(bpm, t_sig, tot_measures, offset, student)  # for use during demos
 
@@ -199,7 +200,7 @@ def record(bpm, t_sig, tot_measures, offset, student):
 #################
 def prerecorded_audio(bpm, t_sig, tot_measures, offset, student):
     offset_size =60 * (t_sig / bpm)
-    global red, blue, yellow, gnomestatus
+    global red, gold, yellow, gnomestatus
     global DEMO_WAV
     demo_wav = DEMO_WAV
 
@@ -213,8 +214,8 @@ def prerecorded_audio(bpm, t_sig, tot_measures, offset, student):
     print('offset (samples): ', offset)
     # sd.rec(<length of recording in samples>, <samplerate>, <channels>)
     #threading.timer(delay_display,mainwindow.metro_display.configure(bg='red') ).start()
-    red = True
-    blue = False
+    red = False
+    gold = True
     yellow = False
     mainwindow.change_color(mainwindow)  #changing color to red
 
@@ -228,9 +229,9 @@ def prerecorded_audio(bpm, t_sig, tot_measures, offset, student):
 
     gnomestatus = False
     red = False
-    blue = True
+    gold = True
     yellow = False
-    mainwindow.change_color(mainwindow)  #changes color to blue
+    mainwindow.change_color(mainwindow)  #changes color to gold
 
 
 ###########################################################
