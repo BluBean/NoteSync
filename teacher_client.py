@@ -82,6 +82,7 @@ def receive_mix(s):
     # Try to receive the WAV
     print("Receiving mixed wav file...")
 
+
     # write to corresponding student audio file
     with open(f"NoteSync.wav", "wb") as f:
         data = s.recv(4096)
@@ -94,6 +95,7 @@ def receive_mix(s):
     s.send(b"sick mixtape G")
     print("close conn at receive_mix.")
     s.close()
+    progress_var.set("Recording completed! Awaiting next command.")
 
 
 ###########################################################
@@ -170,11 +172,12 @@ def pull_offsets(ids: List) -> dict:
 def teacher_main():
     # available student IDs
     ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
     s = socket.socket()  # Create a socket object
 
     # connect and send data to server
+    progress_var.set("Connecting to server...")
     conn_server(s)
+    progress_var.set("Receiving mixed wav file...")
     send_GUI_data(s, ids)
 
     # wait to receive final wav file
@@ -329,7 +332,7 @@ def start_stop(bpm, beats):
 
 def mainwindow():
     global  bpm_slider, time_sig_top, measures_slider, ST
-    global S0,S1, S2, S3, S4, S5, S6, S7, S8, S9
+    global S0,S1, S2, S3, S4, S5, S6, S7, S8, S9, progress_var
 
     mainwindow = Tk()
     mainwindow.title("NoteSync")
@@ -447,13 +450,9 @@ def mainwindow():
     var = IntVar()
     play = Checkbutton(mainwindow, image=off, selectimage=on,indicatoron=False,bd = 0,variable=var, command=partial(background,start_stop, bpm_slider,time_sig_top), bg='#99AAB5')
     play.place(x=270, y=270)
-
-    #play = Button(mainwindow, bd = 0, image = off, command=partial(start_stop, bpm_slider,time_sig_slider)).pack()
-    #Opening the maintask window with some random stuff to fil the window
-    #two = Label(mainwindow, text ="TBD", bg="green", fg ="black")
-    #two.pack(fill=X)
-    #three = Label(mainwindow, text ="TBD", bg="blue", fg ="white")
-    #three.pack(side=LEFT, fill=Y)
+    progress_var = StringVar()
+    progress_label = Label(mainwindow, textvariable = progress_var, bg='#99AAB5')
+    progress_label.place(x=320, y=345)
 
     mainwindow.mainloop()
 

@@ -38,8 +38,8 @@ def create_socket(port, t_sec, t_type):
     host = socket.gethostname()
 
     # Bind to port
-    s.bind((host, port))  # ec2 server
-    #s.bind(("127.0.0.1", port))  # local
+    #s.bind((host, port))  # ec2 server
+    s.bind(("127.0.0.1", port))  # local
 
     return s
 
