@@ -450,7 +450,7 @@ class mainwindow:
 
         #filename = 'audio2.wav'
         current_value = '0'
-        student_label = Label(mainwindow, text ="Select Student Number:", font=("32"), bg = "#bca76a")
+        student_label = Label(mainwindow, text ="Select Student ID:", font=("32"), bg = "#bca76a")
         student_spin = Spinbox(mainwindow, from_ = 0, to = 9, wrap = True,width = 2, font=("helvetica 32"), bg = "#bca76a")
 
         Clybutton = Button(mainwindow, text="Run Client",font=("32"), command= partial( background,runClient,student_spin ,ipadd),bg = "#F6F6F6")
