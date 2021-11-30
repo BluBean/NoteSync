@@ -468,7 +468,7 @@ def mainwindow():
     Delay_title.place(x=10, y=10)
     #Total Students Prompt
     total_var = IntVar()
-    student_amount = Label(mainwindow, text="Use up to Student ID :", bg='#99AAB5')
+    student_amount = Label(mainwindow, text="Number of Students :", bg='#99AAB5')
     student_amount.place(x=10, y=30)
     ST = Spinbox(mainwindow, from_=1, to=10, width=2, font=("Arial 11"), wrap=True, bg='#99AAB5', bd=0,
                  textvariable =total_var ,state = 'readonly',readonlybackground = '#99AAB5',command = display_offsets)
