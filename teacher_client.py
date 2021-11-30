@@ -141,7 +141,7 @@ def pull_metronome() -> str:
 # pull num_students value from GUI; store in a string
 def pull_num_students() -> str:
     #returns single digit from 0-9
-    student_number = int(ST.get())
+    student_number = int(ST.get())-1
     return str(student_number)  # test return
     #return str(num_students)
 
