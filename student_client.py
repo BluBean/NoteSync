@@ -4,7 +4,7 @@ from tkinter import *
 from tkinter import filedialog
 from functools import partial
 import threading
-from playsound import playsound
+#from playsound import playsound
 import os
 import sys
 import sounddevice as sd
@@ -20,10 +20,10 @@ ipadd = '18.220.239.193'  # ec2 server
 #ipadd = '127.0.0.1'  # local
 
 # select demo wav file
-DEMO_WAV = 'Base_b89_t4_m9_o0.wav'
+#DEMO_WAV = 'Base_b89_t4_m9_o0.wav'
 #DEMO_WAV = 'Drum_b89_t4_m9_o2.wav'
 #DEMO_WAV = 'Guit_b89_t4_m9_o3.wav'
-#DEMO_WAV = 'Theo_b89_t4_m9_o4.wav'
+DEMO_WAV = 'Theo_b89_t4_m9_o4.wav'
 #DEMO_WAV = 'Pian_b89_t4_m9_o5.wav'
 
 
@@ -258,17 +258,17 @@ def metronome(bpm, tsig):
         counter += 1
         if counter == 1:
             print(f'TICK')
-            playsound('Tick.wav', False)
+            #playsound('Tick.wav', False)
             metrovalue=metrovalue+1
             metrostatus.set(metrovalue)
         elif counter % tsig:
             print(f'tock')
-            playsound('tock.wav', False)
+            #playsound('tock.wav', False)
             metrovalue=metrovalue+1
             metrostatus.set(metrovalue)
         else:
             print(f'tock')
-            playsound('tock.wav', False)
+            #playsound('tock.wav', False)
             metrovalue=tsig
             metrostatus.set(metrovalue)
             metrovalue=0
@@ -312,21 +312,21 @@ def backgroundmetro(bpm, tsig):
     counter = 1
     if counter == 1:
         print(f'TICK')
-        playsound('Tick.wav', False)
+        #playsound('Tick.wav', False)
         metrovalue = metrovalue + 1
         metrostatus.set(metrovalue)
         time.sleep(sleep)
         counter += 1
     while counter % int(tsig):
         print(f'tock')
-        playsound('tock.wav', False)
+        #playsound('tock.wav', False)
         metrovalue = metrovalue + 1
         metrostatus.set(metrovalue)
         time.sleep(sleep)
         counter += 1
 
     print(f'tock')
-    playsound('tock.wav', False)
+    #playsound('tock.wav', False)
     metrovalue = metrovalue + 1
     metrostatus.set(metrovalue)
     time.sleep(sleep)
