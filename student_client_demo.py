@@ -20,11 +20,11 @@ ipadd = '18.220.239.193'  # ec2 server
 #ipadd = '127.0.0.1'  # local
 
 # select demo wav file
-#DEMO_WAV = 'Base_b89_t4_m9_o0.wav'
-#DEMO_WAV = 'Drum_b89_t4_m9_o2.wav'
-#DEMO_WAV = 'Guit_b89_t4_m9_o3.wav'
-DEMO_WAV = 'Theo_b89_t4_m9_o4.wav'
-#DEMO_WAV = 'Pian_b89_t4_m9_o5.wav'
+DEMO_WAV = 'Base_b89_t4_m9_o1.wav'
+#DEMO_WAV = 'Guit_b89_t4_m9_o2.wav'
+#DEMO_WAV = 'Pian_b89_t4_m9_o4.wav'
+#DEMO_WAV = 'Theo_b89_t4_m9_o5.wav'
+#DEMO_WAV = 'Drum_b89_t4_m9_o6.wav'
 
 
 ##########################################################
