@@ -18,12 +18,20 @@ S_PORT = 60002  # Reserve a port for your service.
 ipadd = '18.220.239.193'  # ec2 server
 #ipadd = '127.0.0.1'  # local
 
-# select demo wav file
-DEMO_WAV = 'Base_b90_t4_m9_o1.wav'
+### select demo wav file ###
+# vulf stems
+#DEMO_WAV = 'Base_b90_t4_m9_o1.wav'
 #DEMO_WAV = 'Guit_b90_t4_m9_o2.wav'
 #DEMO_WAV = 'Pian_b90_t4_m9_o4.wav'
 #DEMO_WAV = 'Theo_b90_t4_m9_o5.wav'
 #DEMO_WAV = 'Drum_b90_t4_m9_o6.wav'
+
+# voice stems
+DEMO_WAV = 'vox1_b103_t4_m8_o0.wav'
+#DEMO_WAV = 'vox2_b103_t4_m8_o1.wav'
+#DEMO_WAV = 'vox3_b103_t4_m8_o2.wav'
+#DEMO_WAV = 'vox4_b103_t4_m8_o3.wav'
+#DEMO_WAV = 'vox5_b103_t4_m8_o6.wav'
 
 
 ##########################################################
