@@ -1,7 +1,6 @@
 import socket
 #imports for GUI module
 from tkinter import *
-from tkinter import filedialog
 from functools import partial
 import threading
 #from playsound import playsound

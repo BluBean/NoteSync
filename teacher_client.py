@@ -2,26 +2,21 @@
 
 # Imports
 import os, socket, sys
-import threading
-from _thread import *
 from typing import List
 import json
 #imports for GUI module
 from tkinter import *
-from tkinter import filedialog
 from functools import partial
 from PIL import ImageTk as itk, Image
 import threading
 from playsound import playsound
-import sounddevice as sd
-from scipy.io.wavfile import write
 ## Import for metronome
 import time
 
 
 # Globals
-#HOST = '18.220.239.193'  # ec2 server
-HOST = '127.0.0.1'       # local host
+HOST = '18.220.239.193'  # ec2 server
+#HOST = '127.0.0.1'       # local host
 T_PORT = 60003           # Reserve a port for your service.
 
 

@@ -1,7 +1,6 @@
 import socket
 #imports for GUI module
 from tkinter import *
-from tkinter import filedialog
 from functools import partial
 import threading
 from playsound import playsound
@@ -16,8 +15,8 @@ import time
 
 # Globals
 S_PORT = 60002  # Reserve a port for your service.
-#ipadd = '18.220.239.193'  # ec2 server
-ipadd = '127.0.0.1'  # local
+ipadd = '18.220.239.193'  # ec2 server
+#ipadd = '127.0.0.1'  # local
 
 ##########################################################
 #### Student Client Connection
