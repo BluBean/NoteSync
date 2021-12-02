@@ -170,6 +170,13 @@ def t_download_seq(conn, addr):
     conn.send(bytes(notify, 'utf-8'))
     print("notify: ", notify)
 
+    ### TEST ###
+    final_normal = AudioSegment.from_file("final_mix.wav", format="wav")
+    final_normal_quiet = final_normal - 15  # reduce the boom
+    #effects.normalize(final_normal_quiet)  # normalized audio file
+    final_normal_quiet.export("final_mix.wav", format="wav")
+    ############
+
     # send the recorded file back to client
     with open('final_mix.wav', 'rb') as f:
         print("Sending...")
@@ -384,9 +391,11 @@ def sync_files():
             info = sf.info('mixer' + strid + '.wav')
             print('\n', info)
             addition_file = AudioSegment.from_file("mixer" + strid + ".wav", format="wav")
-            addition_file = effects.normalize(addition_file)  #normalized audio file
             main_file = main_file.overlay(addition_file, position=0)  # Overlay audio2 over audio1
-    file_handle = main_file.export("final_mix.wav", format="wav")
+
+    #main_file_quiet = main_file - 3  # reduce the boom
+    effects.normalize(main_file)  # normalized audio file
+    main_file.export("final_mix.wav", format="wav")
 
 
 # Check to see if we got all the files
